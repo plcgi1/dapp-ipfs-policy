@@ -1,0 +1,26 @@
+{
+  "name": "dapp-ipfs-policy",
+  "version": "0.0.1",
+  "description": "",
+  "main": "truffle-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plcgi1/dapp-ipfs-policy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plcgi1/dapp-ipfs-policy/issues"
+  },
+  "homepage": "https://github.com/plcgi1/dapp-ipfs-policy#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^2.3.0",
+    "bs58": "^4.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}
