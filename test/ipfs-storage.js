@@ -3,11 +3,11 @@ const truffleAssert = require('truffle-assertions');
 
 const ERC721WithMetadata = artifacts.require('./ERC721WithMetadata.sol');
 
-contract('ERC721WithMetadata', (accounts) => {
-  let ipfsStorage;
+let ERC721WithMetadataInstance;
 
+contract('ERC721WithMetadata', (accounts) => {
   beforeEach(async () => {
-    ipfsStorage = await ERC721WithMetadata.new();
+    ERC721WithMetadataInstance = await ERC721WithMetadata.new();
   });
 
   const ipfsHashes = [
@@ -17,11 +17,11 @@ contract('ERC721WithMetadata', (accounts) => {
 
   async function setIPFSHash(account, hash) {
     const { digest, hashFunction, size } = getBytes32FromMultiash(hash);
-    return ipfsStorage.addMetadata(digest, hashFunction, size, { from: account });
+    return ERC721WithMetadataInstance.addMetadata(digest, hashFunction, size, { from: account });
   }
 
   async function getIPFSHash(account, index) {
-    const response = await ipfsStorage.getMetadata(account, index);
+    const response = await ERC721WithMetadataInstance.getMetadata(account, index);
 
     return getMultihashFromContractResponse(response);
   }
@@ -54,10 +54,25 @@ contract('ERC721WithMetadata', (accounts) => {
     await setIPFSHash(accounts[0], ipfsHashes[0]);
     await setIPFSHash(accounts[0], ipfsHashes[1]);
 
-    const count = await ipfsStorage.getLengthForCurrentAccount({ from: accounts[0] });
-    const count0 = await ipfsStorage.getLengthForCurrentAccount({ from: accounts[1] });
+    const count = await ERC721WithMetadataInstance.getLengthForCurrentAccount({ from: accounts[0] });
+    const count0 = await ERC721WithMetadataInstance.getLengthForCurrentAccount({ from: accounts[1] });
 
     assert.equal(count.toNumber(), 2, 'Number of multihashes is 2 for accounts[0]')
     assert.equal(count0.toNumber(), 0, 'Number of multihashes is 0 for accounts[1]')
+  });
+
+  it('should get IPFS hashes after setting for accounts with invalid values', async () => {
+    for (const account of accounts) {
+      try {
+        await setIPFSHash(account, ipfsHashes[0]);
+  
+        await getIPFSHash(account, 1)
+      } catch (error) {
+        assert.ok(
+          /ERC721WithMetadata\.Empty data/.test(error.message),
+          'The contract is throwing which is the expected behaviour when you try to overflow'
+        )
+      }
+    }
   });
 });

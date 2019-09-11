@@ -55,7 +55,7 @@ contract ERC721WithMetadata is ERC721 {
     public
     view
     returns(bytes32 digest, uint8 hashfunction, uint8 size) {
-        require(entries[_address][_cursor].digest != 0);
+        require(entries[_address][_cursor].digest != 0, "ERC721WithMetadata.Empty data, reverting");
 
         Multihash storage entry = entries[_address][_cursor];
 
