@@ -9,7 +9,7 @@ import 'preact-material-components/style.css';
 // TODO add save to localstorage with statuses != published
 // TODO investigate cloudflare/ipns - and change infura
 // TODO add network view
-// TODO add feedbask from ipns with snackbar
+// TODO add feedback from ipns with snackbar
 
 export default class App extends Component {
 	state = {
