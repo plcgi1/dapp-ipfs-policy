@@ -1,1 +1,1 @@
-# dapp-ipfs-polisy
+# dapp-ipfs-policy
