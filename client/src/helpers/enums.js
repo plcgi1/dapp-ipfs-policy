@@ -1,9 +1,11 @@
 export const status = {
-  published: {
-    label: 'Published'
-  },
   draft: {
+    id: 'draft',
     label: 'Draft'
+  },
+  published: {
+    id: 'published',
+    label: 'Published'
   }
 }
 export const  brand = {

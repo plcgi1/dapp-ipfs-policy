@@ -1,8 +1,9 @@
 import { Component } from 'preact';
-import LinearProgress from 'preact-material-components/LinearProgress'
+import LinearProgress from 'preact-material-components/LinearProgress';
+import Snackbar from 'preact-material-components/Snackbar';
 import PolicyForm from './policy-form'
-import PolicyModel from '../models/policy';
-const IPFS = require('ipfs-mini');
+import Metadata from '../models/metadata';
+import IPFS from 'ipfs-mini';
 import 'preact-material-components/style.css';
 
 // TODO add snackbar component
@@ -18,30 +19,42 @@ export default class App extends Component {
 	
 	componentDidCatch(error) {
 		console.error('App.error', error)
+		// TODO add snackbar error
 		this.setState({ saving: false });
 	}
 	
 	componentDidMount () {
 		this.setupIpfs()
-		// TODO setup web3
+		this.setupWeb3()
+    // this.bar.MDComponent.show({
+    //   message: "Hello Snack!"
+    // });
 		// TODO setup contract
 		// TODO setup jwt
 	}
-	
+
+	setupWeb3 () {
+    // TODO implement me
+	}
+
   setupIpfs () {
-    const ipfs = new IPFS({host: 'ipfs.infura.io', port: 5001, protocol: 'https'});
+    const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
     this.setState({ipfs: ipfs});
 	}
 
 	async onSave (filledModel) {
-		console.info('onSubmit', filledModel)
 		this.setState({ saving: true })
 		try {
-			const hash = await this.state.ipfs.addJSON(filledModel)
-			console.info('data', hash)
+			const cid = await Metadata.save(filledModel, this.state.ipfs)
+
+			console.info('data', cid)
       this.setState({ saving: false })
 		} catch (error) {
+			console.error('App.error', error.message)
+      this.bar.MDComponent.show({
+          message: error.message
+        });
       this.setState({ saving: false })
 		}
     // this.props.ipfs.addJSON(data, (err, hash) => {
@@ -79,7 +92,8 @@ export default class App extends Component {
 					saving ? <LinearProgress indeterminate /> : null
 				}
         <h1>Metadata editor</h1>
-        <PolicyForm disabled={saving} model={PolicyModel} onsave={e => this.onSave(e)}/>
+        <PolicyForm disabled={saving} model={Metadata.model} onsave={e => this.onSave(e)}/>
+        <Snackbar dismissesOnAction ref={bar=>{this.bar=bar;}}/>
 			</div>
 		);
 	}
