@@ -48,6 +48,16 @@ contract('ERC721WithMetadata', (accounts) => {
       assert.equal(hash1, ipfsHashes[0], 'Hash 1 equal');
       assert.equal(hash2, ipfsHashes[1], 'Hash 2 equal');
     }
+  });
 
+  it('should get multihashes length', async () => {
+    await setIPFSHash(accounts[0], ipfsHashes[0]);
+    await setIPFSHash(accounts[0], ipfsHashes[1]);
+
+    const count = await ipfsStorage.getLengthForCurrentAccount({ from: accounts[0] });
+    const count0 = await ipfsStorage.getLengthForCurrentAccount({ from: accounts[1] });
+
+    assert.equal(count.toNumber(), 2, 'Number of multihashes is 2 for accounts[0]')
+    assert.equal(count0.toNumber(), 0, 'Number of multihashes is 0 for accounts[1]')
   });
 });

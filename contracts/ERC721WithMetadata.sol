@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/drafts/Counters.sol";
 
 /**
- * @title IPFSStorage
+ * @title ERC721WithMetadata - save CID from IPFS storage to token contract
  * @author thx to Forest Fang (@saurfang)
  * @dev Stores IPFS (multihash) hash by address. A multihash entry is in the format
  * of <varint hash function code><varint digest size in bytes><hash function output>
@@ -60,5 +60,12 @@ contract ERC721WithMetadata is ERC721 {
         Multihash storage entry = entries[_address][_cursor];
 
         return (entry.digest, entry.hashFunction, entry.size);
+    }
+
+    function getLengthForCurrentAccount()
+    public
+    view
+    returns(uint256 _length) {
+        return counters[msg.sender].current();
     }
 }
