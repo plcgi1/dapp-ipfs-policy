@@ -4,9 +4,9 @@ import Snackbar from 'preact-material-components/Snackbar';
 import PolicyForm from './policy-form'
 import Metadata from '../models/metadata';
 import IPFS from 'ipfs-mini';
+import getWeb3 from '../helpers/getWeb3'
 import 'preact-material-components/style.css';
 
-// TODO add snackbar component
 // TODO add save to localstorage with statuses != published
 // TODO investigate cloudflare/ipns - and change infura
 // TODO add network view
@@ -14,7 +14,9 @@ import 'preact-material-components/style.css';
 
 export default class App extends Component {
 	state = {
-		saving: false
+		saving: false,
+		loadingWeb3: false,
+    networkName: 'Init unknown'
 	}
 	
 	componentDidCatch(error) {
@@ -25,17 +27,63 @@ export default class App extends Component {
 	
 	componentDidMount () {
 		this.setupIpfs()
-		this.setupWeb3()
-    // this.bar.MDComponent.show({
-    //   message: "Hello Snack!"
-    // });
+		// this.setupWeb3()
+
 		// TODO setup contract
 		// TODO setup jwt
 	}
 
-	setupWeb3 () {
-    // TODO implement me
-	}
+	// async setupWeb3 () {
+  //   this.setState({ loadingWeb3: true });
+	//
+  //   const results = await getWeb3
+	// 	let web3 = results.web3;
+	// 	if (!web3) {
+	// 		return this.setState({
+	// 			loadingWeb3: false,
+	// 			network: "Unknown",
+	// 			web3: null
+	// 		});
+	// 	}
+	//
+	// 	try {
+	// 		let networkName;
+	// 		const networkId = await web3.version.getNetwork()
+	// 		switch (networkId) {
+	// 			case "1":
+	// 				networkName = "Main";
+	// 				break;
+	// 			case "2":
+	// 				networkName = "Morden";
+	// 				break;
+	// 			case "3":
+	// 				networkName = "Ropsten";
+	// 				break;
+	// 			case "4":
+	// 				networkName = "Rinkeby";
+	// 				break;
+	// 			case "42":
+	// 				networkName = "Kovan";
+	// 				break;
+	// 			case "999":
+	// 				networkName = "Truffle local";
+	// 				break;
+	// 			default:
+	// 				networkName = "Unknown";
+	// 		}
+	//
+	// 		this.setState({
+	// 			loadingWeb3: false,
+	// 			web3: web3,
+	// 			networkName: networkName
+	// 		});
+	// 	} catch (error) {
+  //     this.setState({loadingWeb3: false});
+  //     this.bar.MDComponent.show({
+  //       message: error.message
+  //     });
+	// 	}
+	// }
 
   setupIpfs () {
     const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
@@ -85,13 +133,13 @@ export default class App extends Component {
 	}
 
 	render() {
-		const { saving } = this.state
+		const { saving, loadingWeb3, networkName } = this.state
 		return (
 			<div id="app">
 				{
-					saving ? <LinearProgress indeterminate /> : null
+					(loadingWeb3 || saving) ? <LinearProgress indeterminate /> : null
 				}
-        <h1>Metadata editor</h1>
+        <h1>Metadata editor. Current network: {networkName}</h1>
         <PolicyForm disabled={saving} model={Metadata.model} onsave={e => this.onSave(e)}/>
         <Snackbar dismissesOnAction ref={bar=>{this.bar=bar;}}/>
 			</div>
