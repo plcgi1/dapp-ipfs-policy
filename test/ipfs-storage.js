@@ -1,4 +1,5 @@
-const { getBytes32FromMultiash, getMultihashFromContractResponse } = require('../src/multihash');
+const { getBytes32FromMultiash, getMultihashFromContractResponse, getMultihashFromBytes32 } = require('../src/multihash');
+const truffleAssert = require('truffle-assertions');
 
 const IPFSStorage = artifacts.require('./IPFSStorage.sol');
 
@@ -19,16 +20,27 @@ contract('IPFSStorage', (accounts) => {
     return ipfsStorage.addMetadata(digest, hashFunction, size, { from: account });
   }
 
-  async function getIPFSHash(account) {
-    const response = await ipfsStorage.getMetadata(account, 0);
+  async function getIPFSHash(account, index) {
+    const response = await ipfsStorage.getMetadata(account, index);
 
     return getMultihashFromContractResponse(response);
   }
 
+  it('should fire event when new has is set', async () => {
+    const tx = await setIPFSHash(accounts[0], ipfsHashes[0]);
+
+    truffleAssert.eventEmitted(tx, 'EntrySet', (ev) => {
+      const hash = getMultihashFromBytes32(ev)
+
+      return hash === ipfsHashes[0];
+    });
+  });
+
   it('should get IPFS hash after setting', async () => {
     await setIPFSHash(accounts[0], ipfsHashes[0]);
-    const hash = await getIPFSHash(accounts[0])
-    // assert(await getIPFSHash(accounts[0])).to.equal(ipfsHashes[0]);
-    console.info(hash)
+
+    const hash = await getIPFSHash(accounts[0], 0)
+
+    assert.equal(hash, ipfsHashes[0], 'Hashes equal');
   });
 });

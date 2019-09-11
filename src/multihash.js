@@ -53,12 +53,10 @@ exports.getMultihashFromBytes32 = getMultihashFromBytes32
  * @returns {Multihash} multihash object
  */
 const parseContractResponse = (response) => {
-  const [digest, hashFunction, size] = response;
-
   return {
-    digest,
-    hashFunction: hashFunction.toNumber(),
-    size: size.toNumber(),
+    digest: response[0],
+    hashFunction: response[1].toNumber(),
+    size: response[2].toNumber(),
   };
 }
 

@@ -16,7 +16,13 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
 contract IPFSStorage is ERC721 {
     using Counters for Counters.Counter;
 
-    // TODO add event EntrySet
+    event EntrySet (
+        address indexed key,
+        bytes32 digest,
+        uint8 hashFunction,
+        uint8 size,
+        uint256 cursor
+    );
 
     struct Multihash {
         bytes32 digest;
@@ -32,14 +38,25 @@ contract IPFSStorage is ERC721 {
     {
         Multihash memory entry = Multihash(_digest, _hashFunction, _size);
 
-        counters[msg.sender].increment();
-
         entries[msg.sender][counters[msg.sender].current()] = entry;
 
-        // TODO add emit event EntrySet
+        counters[msg.sender].increment();
+
+        emit EntrySet(
+            msg.sender,
+            _digest,
+            _hashFunction,
+            _size,
+            counters[msg.sender].current()
+        );
     }
 
-    function getMetadata(address _address, uint _cursor) public returns(bytes32 digest, uint8 hashfunction, uint8 size) {
+    function getMetadata(address _address, uint _cursor)
+    public
+    view
+    returns(bytes32 digest, uint8 hashfunction, uint8 size) {
+        require(entries[_address][_cursor].digest != 0);
+
         Multihash storage entry = entries[_address][_cursor];
 
         return (entry.digest, entry.hashFunction, entry.size);
