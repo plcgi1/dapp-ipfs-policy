@@ -21,11 +21,16 @@ contract('ERC721WithMetadata', (accounts) => {
   }
 
   async function getIPFSHash(account, index) {
-    const response = await ERC721WithMetadataInstance.getMetadata(account, index);
+    const response = await ERC721WithMetadataInstance.getMetadataByCursor(account, index);
 
     return getMultihashFromContractResponse(response);
   }
 
+  async function getIPFSHashForCurrent(account) {
+    const response = await ERC721WithMetadataInstance.getMetadata({ from: account });
+
+    return getMultihashFromContractResponse(response);
+  }
   it('should fire event when new has is set', async () => {
     const tx = await setIPFSHash(accounts[0], ipfsHashes[0]);
 
@@ -63,13 +68,21 @@ contract('ERC721WithMetadata', (accounts) => {
 
   it('should get IPFS hashes after setting for accounts with invalid values', async () => {
     for (const account of accounts) {
+      await setIPFSHash(account, ipfsHashes[0]);
+      const hash = await getIPFSHashForCurrent(account);
+
+      assert.equal(hash, ipfsHashes[0], 'Hash 1 equal');
+    }
+  });
+
+  it('should get IPFS hashes after setting for accounts with invalid values', async () => {
+    for (const account of accounts) {
       try {
         await setIPFSHash(account, ipfsHashes[0]);
-  
         await getIPFSHash(account, 1)
       } catch (error) {
         assert.ok(
-          /ERC721WithMetadata\.Empty data/.test(error.message),
+          /ERC721WithMetadata\.getMetadataByCursor\.Empty data/.test(error.message),
           'The contract is throwing which is the expected behaviour when you try to overflow'
         )
       }

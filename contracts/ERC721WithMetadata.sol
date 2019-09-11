@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
 
 /**
  * @title ERC721WithMetadata - save CID from IPFS storage to token contract
- * @author thx to Forest Fang (@saurfang)
+ * @author @plcgi1 inspired by Forest Fang (@saurfang)
  * @dev Stores IPFS (multihash) hash by address. A multihash entry is in the format
  * of <varint hash function code><varint digest size in bytes><hash function output>
  * See https://github.com/multiformats/multihash
@@ -33,6 +33,12 @@ contract ERC721WithMetadata is ERC721 {
     mapping (address => mapping (uint => Multihash)) private entries;
     mapping (address => Counters.Counter) private counters;
 
+    /**
+    * @dev associate a multihash entry with the sender address
+    * @param _digest hash digest produced by hashing content using hash function
+    * @param _hashFunction hashFunction code for the hash function used
+    * @param _size length of the digest
+    */
     function addMetadata(bytes32 _digest, uint8 _hashFunction, uint8 _size)
     public
     {
@@ -51,17 +57,39 @@ contract ERC721WithMetadata is ERC721 {
         );
     }
 
-    function getMetadata(address _address, uint _cursor)
+    /**
+    * @dev retrieve multihash entry associated with an address
+    * @param _address address used as key
+    * @param _cursor cursor used as index
+    */
+    function getMetadataByCursor(address _address, uint _cursor)
     public
     view
     returns(bytes32 digest, uint8 hashfunction, uint8 size) {
-        require(entries[_address][_cursor].digest != 0, "ERC721WithMetadata.Empty data, reverting");
+        require(entries[_address][_cursor].digest != 0, "ERC721WithMetadata.getMetadataByCursor.Empty data, reverting");
 
         Multihash storage entry = entries[_address][_cursor];
 
         return (entry.digest, entry.hashFunction, entry.size);
     }
 
+    /**
+    * @dev retrieve last multihash entry associated with current address
+    */
+    function getMetadata()
+    public
+    view
+    returns(bytes32 digest, uint8 hashfunction, uint8 size) {
+        require(entries[msg.sender][counters[msg.sender].current() - 1].digest != 0, "ERC721WithMetadata.getMetadata.Empty data, reverting");
+
+        Multihash memory entry = entries[msg.sender][counters[msg.sender].current() - 1];
+
+        return (entry.digest, entry.hashFunction, entry.size);
+    }
+
+    /**
+    * @dev retrieve entries length for current account
+    */
     function getLengthForCurrentAccount()
     public
     view
