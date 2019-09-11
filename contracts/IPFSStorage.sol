@@ -16,6 +16,8 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
 contract IPFSStorage is ERC721 {
     using Counters for Counters.Counter;
 
+    // TODO add event EntrySet
+
     struct Multihash {
         bytes32 digest;
         uint8 hashFunction;
@@ -34,54 +36,12 @@ contract IPFSStorage is ERC721 {
 
         entries[msg.sender][counters[msg.sender].current()] = entry;
 
-        // get last index for msg.sender
-
-//        uint currentIndex = indexes[msg.sender];
-//        // increment last index
-//        indexes[msg.sender] = currentIndex + 1;
-//
-//        // add to policies lastIndex => Multihash
-//
-//        // change entries =>
-//        Multihash memory entry = Multihash(_digest, _hashFunction, _size);
-//        entries[msg.sender] = entry;
-//        EntrySet(
-//            msg.sender,
-//            _digest,
-//            _hashFunction,
-//            _size
-//        );
+        // TODO add emit event EntrySet
     }
 
     function getMetadata(address _address, uint _cursor) public returns(bytes32 digest, uint8 hashfunction, uint8 size) {
         Multihash storage entry = entries[_address][_cursor];
+
         return (entry.digest, entry.hashFunction, entry.size);
     }
-//    /**
-//     * @dev deassociate any multihash entry with the sender address
-//     */
-//    function clearEntry()
-//    public
-//    {
-//        require(entries[msg.sender].digest != 0);
-//        delete entries[msg.sender];
-//        EntryDeleted(msg.sender);
-//    }
-//
-//    /**
-//     * @dev retrieve multihash entry associated with an address
-//     * @param _address address used as key
-//     */
-//    function getEntry(address _address)
-//    public
-//    view
-//    returns(bytes32 digest, uint8 hashfunction, uint8 size)
-//    {
-//        Multihash storage entry = entries[_address];
-//        return (entry.digest, entry.hashFunction, entry.size);
-//    }
-//
-//    constructor () public {
-//        cursor = 0;
-//    }
 }

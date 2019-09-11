@@ -1,18 +1,33 @@
 import { Component } from 'preact';
+import LinearProgress from 'preact-material-components/LinearProgress'
 import PolicyForm from './policy-form'
 import PolicyModel from '../models/policy';
 const IPFS = require('ipfs-mini');
 import 'preact-material-components/style.css';
 
+// TODO add snackbar component
+// TODO add save to localstorage with statuses != published
+// TODO investigate cloudflare/ipns - and change infura
+// TODO add network view
+// TODO add feedbask from ipns with snackbar
+
 export default class App extends Component {
 	state = {
 		saving: false
 	}
-
+	
+	componentDidCatch(error) {
+		console.error('App.error', error)
+		this.setState({ saving: false });
+	}
+	
 	componentDidMount () {
 		this.setupIpfs()
+		// TODO setup web3
+		// TODO setup contract
+		// TODO setup jwt
 	}
-
+	
   setupIpfs () {
     const ipfs = new IPFS({host: 'ipfs.infura.io', port: 5001, protocol: 'https'});
 
@@ -60,7 +75,10 @@ export default class App extends Component {
 		const { saving } = this.state
 		return (
 			<div id="app">
-        <h1>Policy editor</h1>
+				{
+					saving ? <LinearProgress indeterminate /> : null
+				}
+        <h1>Metadata editor</h1>
         <PolicyForm disabled={saving} model={PolicyModel} onsave={e => this.onSave(e)}/>
 			</div>
 		);

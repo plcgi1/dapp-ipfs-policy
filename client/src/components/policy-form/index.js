@@ -1,9 +1,9 @@
-import { Fragment, Component } from 'preact';
-import FormField from 'preact-material-components/FormField'
+import { Component } from 'preact';
 import TextField from 'preact-material-components/TextField'
-import { LayoutGridCell, LayoutGrid } from 'preact-material-components/LayoutGrid'
-import List from 'preact-material-components/List'
+import LayoutGrid from 'preact-material-components/LayoutGrid'
 import Button from 'preact-material-components/Button';
+import Select from 'preact-material-components/Select';
+import { status } from '../../helpers/enums'
 
 export default class PolicyForm extends Component {
   constructor (props) {
@@ -14,17 +14,17 @@ export default class PolicyForm extends Component {
     }
     this.validate = this.validate.bind(this)
     this.onInput = this.onInput.bind(this)
-    this.onSave =  this.onSave.bind(this)
+    this.onSave = this.onSave.bind(this)
     this.onPublish = this.onPublish.bind(this)
   }
+  
   validate (name, value) {
     const { form, errors } = this.state
     if (name) {
-      console.info('NN', name, value)
       if (!value) {
         errors[name] = 'Required field'
       } else {
-        // delete errors[name]
+        delete errors[name]
       }
       return Object.values(errors).length > 0 ? errors : false
     }
@@ -73,38 +73,62 @@ export default class PolicyForm extends Component {
     console.info('onPublish')
   }
 
+  getFieldComponent (name, valid, disabled, form) {
+    const { model } = this.props
+
+    if (model.properties[name].fieldType === 'text') {
+      return <TextField
+        name={name}
+        required
+        fullwidth
+        effect="lineOutwards"
+        label={name}
+        disabled={disabled}
+        value={form[name]}
+        onChange={this.onInput}
+        valid={valid}
+        helperText={model.properties[name].description}
+        helperTextPersistent
+      />
+    } else if (model.properties[name].fieldType === 'select') {
+      return <Select
+        name={name}
+        hintText="Select a status"
+        selectedIndex={0}
+        style={{ minWidth: '100%' }}
+        onChange={this.onInput}
+        valid={valid}
+        box>
+        {
+          Object.keys(status).map(name => {
+            return <Select.Item value={name}>{status[name].label}</Select.Item>
+          })
+        }
+      </Select>;
+    }
+  }
   render() {
-    const style = {}
     const { model, disabled } = this.props
     const { form, errors } = this.state
+
     return (
-      <LayoutGrid align='middle'>
-           <form class={style['contact2-form']}>
-             <LayoutGrid.Inner>
+      <LayoutGrid align='middle' cols={1}>
+        <LayoutGrid.Inner>
+          <LayoutGrid.Cell cols="3"></LayoutGrid.Cell>
+          <LayoutGrid.Cell cols="6">
+           <form>
             {
               Object.keys(model.properties).map((property) => {
                 const valid = errors[property] ? false : true
-console.info('valid', property, name, valid )
-                return <div>
-                  <TextField
-                    style={{width: '100%' }}
-                    name={property}
-                    label={property}
-                    disabled={disabled}
-                    value={form[property]}
-                    onInput={this.onInput}
-                    onChange={this.onInput}
-                    valid={valid}
-                    helperText={model.properties[property].description}
-                  />
-                </div>
+                return this.getFieldComponent(property, valid, disabled, form)
               })
             }
-            </LayoutGrid.Inner>
              <Button onClick={this.onSave} disabled={disabled}>Save</Button>
              <Button onClick={this.onPublish} disabled={disabled}>Publish</Button>
           </form>
-        </LayoutGrid>
+          </LayoutGrid.Cell>
+        </LayoutGrid.Inner>
+      </LayoutGrid>
     );
   }
 }
