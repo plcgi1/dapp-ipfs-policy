@@ -1,13 +1,13 @@
 const { getBytes32FromMultiash, getMultihashFromContractResponse, getMultihashFromBytes32 } = require('../src/multihash');
 const truffleAssert = require('truffle-assertions');
 
-const IPFSStorage = artifacts.require('./IPFSStorage.sol');
+const ERC721WithMetadata = artifacts.require('./ERC721WithMetadata.sol');
 
-contract('IPFSStorage', (accounts) => {
+contract('ERC721WithMetadata', (accounts) => {
   let ipfsStorage;
 
   beforeEach(async () => {
-    ipfsStorage = await IPFSStorage.new();
+    ipfsStorage = await ERC721WithMetadata.new();
   });
 
   const ipfsHashes = [
@@ -36,11 +36,18 @@ contract('IPFSStorage', (accounts) => {
     });
   });
 
-  it('should get IPFS hash after setting', async () => {
-    await setIPFSHash(accounts[0], ipfsHashes[0]);
+  it('should get IPFS hashes after setting for accounts', async () => {
+    for (const account of accounts) {
+      await setIPFSHash(account, ipfsHashes[0]);
 
-    const hash = await getIPFSHash(accounts[0], 0)
+      await setIPFSHash(account, ipfsHashes[1]);
 
-    assert.equal(hash, ipfsHashes[0], 'Hashes equal');
+      const hash1 = await getIPFSHash(account, 0)
+      const hash2 = await getIPFSHash(account, 1)
+
+      assert.equal(hash1, ipfsHashes[0], 'Hash 1 equal');
+      assert.equal(hash2, ipfsHashes[1], 'Hash 2 equal');
+    }
+
   });
 });

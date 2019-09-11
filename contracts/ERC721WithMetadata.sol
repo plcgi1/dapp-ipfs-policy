@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
  * Currently IPFS hash is 34 bytes long with first two segments represented as a single byte (uint8)
  * The digest is 32 bytes long and can be stored using bytes32 efficiently.
  */
-contract IPFSStorage is ERC721 {
+contract ERC721WithMetadata is ERC721 {
     using Counters for Counters.Counter;
 
     event EntrySet (
