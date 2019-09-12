@@ -27,63 +27,64 @@ export default class App extends Component {
 	
 	componentDidMount () {
 		this.setupIpfs()
-		// this.setupWeb3()
+		this.setupWeb3()
 
 		// TODO setup contract
 		// TODO setup jwt
 	}
 
-	// async setupWeb3 () {
-  //   this.setState({ loadingWeb3: true });
-	//
-  //   const results = await getWeb3
-	// 	let web3 = results.web3;
-	// 	if (!web3) {
-	// 		return this.setState({
-	// 			loadingWeb3: false,
-	// 			network: "Unknown",
-	// 			web3: null
-	// 		});
-	// 	}
-	//
-	// 	try {
-	// 		let networkName;
-	// 		const networkId = await web3.version.getNetwork()
-	// 		switch (networkId) {
-	// 			case "1":
-	// 				networkName = "Main";
-	// 				break;
-	// 			case "2":
-	// 				networkName = "Morden";
-	// 				break;
-	// 			case "3":
-	// 				networkName = "Ropsten";
-	// 				break;
-	// 			case "4":
-	// 				networkName = "Rinkeby";
-	// 				break;
-	// 			case "42":
-	// 				networkName = "Kovan";
-	// 				break;
-	// 			case "999":
-	// 				networkName = "Truffle local";
-	// 				break;
-	// 			default:
-	// 				networkName = "Unknown";
-	// 		}
-	//
-	// 		this.setState({
-	// 			loadingWeb3: false,
-	// 			web3: web3,
-	// 			networkName: networkName
-	// 		});
-	// 	} catch (error) {
-  //     this.setState({loadingWeb3: false});
-  //     this.bar.MDComponent.show({
-  //       message: error.message
-  //     });
-	// 	}
-	// }
+	async setupWeb3 () {
+    this.setState({ loadingWeb3: true });
+
+    const results = await getWeb3
+		let web3 = results.web3;
+		if (!web3) {
+			return this.setState({
+				loadingWeb3: false,
+				network: "Unknown.web3 undefined",
+				web3: null
+			});
+		}
+
+		try {
+			let networkName;
+			const networkId = await web3.version.getNetwork()
+			console.info('networkId', networkId)
+			switch (networkId) {
+				case "1":
+					networkName = "Main";
+					break;
+				case "2":
+					networkName = "Morden";
+					break;
+				case "3":
+					networkName = "Ropsten";
+					break;
+				case "4":
+					networkName = "Rinkeby";
+					break;
+				case "42":
+					networkName = "Kovan";
+					break;
+				case "999":
+					networkName = "Truffle local";
+					break;
+				default:
+					networkName = "Unknown";
+			}
+
+			this.setState({
+				loadingWeb3: false,
+				web3: web3,
+				networkName: networkName
+			});
+		} catch (error) {
+      this.setState({loadingWeb3: false});
+      this.bar.MDComponent.show({
+        message: error.message
+      });
+		}
+	}
 
   setupIpfs () {
     const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });

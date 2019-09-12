@@ -9,7 +9,7 @@
     "start:development": "npm run -s dev",
     "build": "preact build",
     "serve": "preact build && preact serve",
-    "dev": "preact watch",
+    "dev": "PORT=3000 preact watch",
     "lint": "eslint src",
     "test": "jest"
   },
