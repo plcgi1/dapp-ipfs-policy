@@ -1,0 +1,4 @@
+FROM jbenet/go-ipfs:latest
+
+COPY ./ipfs.sh /usr/local/bin/start_ipfs
+CMD ["/usr/local/bin/start_ipfs"]

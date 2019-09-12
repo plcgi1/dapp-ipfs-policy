@@ -9,7 +9,7 @@
     "start:development": "npm run -s dev",
     "build": "preact build",
     "serve": "preact build && preact serve",
-    "dev": "PORT=3000 preact watch",
+    "dev": "PORT=3001 preact watch",
     "lint": "eslint src",
     "test": "jest"
   },
@@ -36,7 +36,8 @@
     "preact-material-components": "^1.6.0",
     "preact-render-to-string": "^4.1.0",
     "preact-router": "^2.5.7",
-    "truffle-contract": "^4.0.31"
+    "truffle-contract": "^4.0.31",
+    "webpack-dev-server": "^3.8.0"
   },
   "jest": {
     "preset": "jest-preset-preact"

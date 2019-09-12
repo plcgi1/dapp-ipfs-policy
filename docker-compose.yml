@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  ipfs:
+    image: jbenet/go-ipfs:latest
+    ports:
+      - "4001:4001"
+      - "127.0.0.1:5001:5001"
+      - "8080:8080"
+  ganache:
+    ports:
+      - 8585:8585
+    build:
+      context: .
+      dockerfile: ./docker-files/ganache

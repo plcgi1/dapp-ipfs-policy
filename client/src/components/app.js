@@ -87,7 +87,8 @@ export default class App extends Component {
 	}
 
   setupIpfs () {
-    const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+    // const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+    const ipfs = new IPFS({});
 
     this.setState({ipfs: ipfs});
 	}
@@ -95,9 +96,9 @@ export default class App extends Component {
 	async onSave (filledModel) {
 		this.setState({ saving: true })
 		try {
-			const cid = await Metadata.save(filledModel, this.state.ipfs)
+	   	const result = await Metadata.save(filledModel, this.state.ipfs)
 
-			console.info('data', cid)
+			console.info('data', result)
       this.setState({ saving: false })
 		} catch (error) {
 			console.error('App.error', error.message)
@@ -141,7 +142,7 @@ export default class App extends Component {
 					(loadingWeb3 || saving) ? <LinearProgress indeterminate /> : null
 				}
         <h1>Metadata editor. Current network: {networkName}</h1>
-        <PolicyForm disabled={saving} model={Metadata.model} onsave={e => this.onSave(e)}/>
+        <PolicyForm disabled={saving} model={Metadata.schema} onsave={e => this.onSave(e)}/>
         <Snackbar dismissesOnAction ref={bar=>{this.bar=bar;}}/>
 			</div>
 		);

@@ -1,24 +1,22 @@
 import { status } from '../helpers/enums'
 
-export default {
+const model = {
   save: async (payload, ipfs) => {
     if (payload.status === status.published.id) {
       // save to ipfs
-      const cid = await ipfs.addJSON(payload)
+      payload.cid = await ipfs.addJSON(payload)
 
-      window.localStorage.removeItem('metadata')
-
-      // TODO save to contract cid
-      return cid
+      // TODO save cid to contract
     }
     window.localStorage.setItem('metadata', JSON.stringify(payload));
-    return false;
+
+    return payload;
   },
   get: () => {
     const result = window.localStorage.getItem('metadata');
     return JSON.parse(result);
   },
-  model: {
+  schema: {
     "title": "Asset Metadata",
     "type": "object",
     "properties": {
@@ -55,3 +53,4 @@ export default {
     }
   }
 }
+export default model;
