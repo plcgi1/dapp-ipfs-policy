@@ -1,7 +1,8 @@
 pragma solidity ^0.5.8;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
+// tests fails with such ansector
+// import "@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
 import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721Mintable.sol";
 import "@openzeppelin/contracts/drafts/Counters.sol";
@@ -16,7 +17,7 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
  * Currently IPFS hash is 34 bytes long with first two segments represented as a single byte (uint8)
  * The digest is 32 bytes long and can be stored using bytes32 efficiently.
  */
-contract ERC721WithPolicy is ERC165, ERC721, ERC721Metadata, ERC721Mintable {
+contract ERC721WithPolicy is ERC721, ERC721Mintable {
     using Counters for Counters.Counter;
 
     event EntrySet (
