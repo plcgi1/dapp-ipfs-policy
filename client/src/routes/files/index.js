@@ -1,24 +1,49 @@
-import { h, Component } from 'preact';
+import { Component } from 'preact';
+import { Link } from 'preact-router';
 import Card from 'preact-material-components/Card';
-import 'preact-material-components/Card/style.css';
-import 'preact-material-components/Button/style.css';
+import List from 'preact-material-components/List';
 import style from './style';
 
 export default class Files extends Component {
+  state = {
+    data: [{
+      cid: '12312312312312312',
+      name: 'name1.json'
+    }],
+    count: 0
+  }
+  componentDidMount () {
+    // TODO go to server - get files list
+  }
+
   render() {
+    const { data } = this.state
+    const { user } = this.props
     return (
       <div class={`${style.home} page`}>
-        <h1>Home route</h1>
+        <h1>My policy list</h1>
         <Card>
-          <div class={style.cardHeader}>
-            <h2 class=" mdc-typography--title">Files card</h2>
-          </div>
           <div class={style.cardBody}>
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+            <List>
+              {
+                data.map(row => {
+                  return <List.Item>
+                    <List.ItemGraphic>folder</List.ItemGraphic>
+                    <List.TextContainer>
+                      <List.PrimaryText>{ row.cid }</List.PrimaryText>
+                      <List.SecondaryText>Feb 9, 2014 TODO fill me with filename</List.SecondaryText>
+                    </List.TextContainer>
+                    { user
+                      ? <List.ItemMeta>
+                        <Link href={`/files/file/${row.cid}`}>edit</Link>
+                      </List.ItemMeta>
+                      : null
+                    }
+                  </List.Item>
+                })
+              }
+            </List>
           </div>
-          <Card.Actions>
-            <Card.ActionButton>OKAY</Card.ActionButton>
-          </Card.Actions>
         </Card>
       </div>
     );

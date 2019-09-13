@@ -69,8 +69,23 @@ export default class PolicyForm extends Component {
 
   onPublish(e) {
     e.preventDefault()
-    // TODO set status published for json
-    console.info('onPublish')
+
+    const { form } = this.state
+
+    const errors = this.validate()
+
+    delete errors[status]
+
+    if (errors) {
+      this.setState({ errors })
+      console.warn('ERRORS', errors)
+      return null
+    }
+    form.status = status.published.id
+
+    this.props.onsave(form)
+
+    this.setState({ form })
   }
 
   getFieldComponent (name, valid, disabled, form) {
@@ -91,6 +106,13 @@ export default class PolicyForm extends Component {
         helperTextPersistent
       />
     } else if (model.properties[name].fieldType === 'select') {
+      const statuses = Object
+        .keys(status)
+        .filter(k => k !== status.published.id)
+        .map(s => {
+          return status[s]
+        })
+
       return <Select
         name={name}
         hintText="Select a status"
@@ -100,8 +122,10 @@ export default class PolicyForm extends Component {
         valid={valid}
         box>
         {
-          Object.keys(status).map(name => {
-            return <Select.Item value={name}>{status[name].label}</Select.Item>
+          statuses.map(status => {
+            const selected = status.id === model.properties[name].id
+
+            return <Select.Item selected={selected} value={status.id}>{status.label}</Select.Item>
           })
         }
       </Select>;

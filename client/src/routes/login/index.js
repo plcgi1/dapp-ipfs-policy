@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
+import { route } from 'preact-router';
 import Card from 'preact-material-components/Card';
 import { asyncSign, asyncCoinBase } from '../../helpers/getWeb3';
-import { login } from '../../services/auth'
+import { login, saveUserToLocalStorage } from '../../services/auth'
 import 'preact-material-components/Card/style.css';
 import 'preact-material-components/Button/style.css';
 
@@ -34,9 +35,12 @@ export default class Login extends Component {
         throw new Error('You need to sign the message to be able to log in.', err);
       }
       user = await login({ publicAddress, signature })
-      
+
+      saveUserToLocalStorage(user)
+
       this.props.onLogged(user)
-      console.info('sdf', user)
+
+      route('/', true)
     } catch (error) {
       // TODO add process with 400 response with bad signature
       console.error('EEEE', error)

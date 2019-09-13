@@ -1,13 +1,13 @@
 const { getBytes32FromMultiash, getMultihashFromContractResponse, getMultihashFromBytes32 } = require('../src/multihash');
 const truffleAssert = require('truffle-assertions');
 
-const ERC721WithMetadata = artifacts.require('./ERC721WithMetadata.sol');
+const ERC721WithPolicy = artifacts.require('./ERC721WithPolicy.sol');
 
 let ERC721WithMetadataInstance;
 
 contract('ERC721WithMetadata', (accounts) => {
   beforeEach(async () => {
-    ERC721WithMetadataInstance = await ERC721WithMetadata.new();
+    contractInstance = await ERC721WithPolicy.new();
   });
 
   const ipfsHashes = [
@@ -17,17 +17,17 @@ contract('ERC721WithMetadata', (accounts) => {
 
   async function setIPFSHash(account, hash) {
     const { digest, hashFunction, size } = getBytes32FromMultiash(hash);
-    return ERC721WithMetadataInstance.addMetadata(digest, hashFunction, size, { from: account });
+    return contractInstance.addMetadata(digest, hashFunction, size, { from: account });
   }
 
   async function getIPFSHash(account, index) {
-    const response = await ERC721WithMetadataInstance.getMetadataByCursor(account, index);
+    const response = await contractInstance.getMetadataByCursor(account, index);
 
     return getMultihashFromContractResponse(response);
   }
 
   async function getIPFSHashForCurrent(account) {
-    const response = await ERC721WithMetadataInstance.getMetadata({ from: account });
+    const response = await contractInstance.getMetadata({ from: account });
 
     return getMultihashFromContractResponse(response);
   }
@@ -59,8 +59,8 @@ contract('ERC721WithMetadata', (accounts) => {
     await setIPFSHash(accounts[0], ipfsHashes[0]);
     await setIPFSHash(accounts[0], ipfsHashes[1]);
 
-    const count = await ERC721WithMetadataInstance.getLengthForCurrentAccount({ from: accounts[0] });
-    const count0 = await ERC721WithMetadataInstance.getLengthForCurrentAccount({ from: accounts[1] });
+    const count = await contractInstance.getLengthForCurrentAccount({ from: accounts[0] });
+    const count0 = await contractInstance.getLengthForCurrentAccount({ from: accounts[1] });
 
     assert.equal(count.toNumber(), 2, 'Number of multihashes is 2 for accounts[0]')
     assert.equal(count0.toNumber(), 0, 'Number of multihashes is 0 for accounts[1]')
@@ -82,7 +82,7 @@ contract('ERC721WithMetadata', (accounts) => {
         await getIPFSHash(account, 1)
       } catch (error) {
         assert.ok(
-          /ERC721WithMetadata\.getMetadataByCursor\.Empty data/.test(error.message),
+          /ERC721WithPolicy\.getMetadataByCursor\.Empty data/.test(error.message),
           'The contract is throwing which is the expected behaviour when you try to overflow'
         )
       }

@@ -36,7 +36,6 @@ export const asyncCoinBase = (web3) => {
 
 export const asyncSign = (web3, param) => {
   return new Promise((resolve, reject) => {
-    console.info('web3.eth.personal', web3.eth.personal)
     return web3.personal.sign(param.data, param.publicAddress, param.password, (err, signature) => {
       if (err) return reject(err)
       return resolve(signature)

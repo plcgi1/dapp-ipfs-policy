@@ -1,6 +1,10 @@
 pragma solidity ^0.5.8;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+// tests fails with such ansector
+// import "@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
+import "@openzeppelin/contracts/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721Mintable.sol";
 import "@openzeppelin/contracts/drafts/Counters.sol";
 
 /**
@@ -13,7 +17,7 @@ import "@openzeppelin/contracts/drafts/Counters.sol";
  * Currently IPFS hash is 34 bytes long with first two segments represented as a single byte (uint8)
  * The digest is 32 bytes long and can be stored using bytes32 efficiently.
  */
-contract ERC721WithMetadata is ERC721 {
+contract ERC721WithPolicy is ERC721, ERC721Mintable {
     using Counters for Counters.Counter;
 
     event EntrySet (
@@ -66,7 +70,7 @@ contract ERC721WithMetadata is ERC721 {
     public
     view
     returns(bytes32 digest, uint8 hashfunction, uint8 size) {
-        require(entries[_address][_cursor].digest != 0, "ERC721WithMetadata.getMetadataByCursor.Empty data, reverting");
+        require(entries[_address][_cursor].digest != 0, "ERC721WithPolicy.getMetadataByCursor.Empty data, reverting");
 
         Multihash storage entry = entries[_address][_cursor];
 
@@ -80,9 +84,9 @@ contract ERC721WithMetadata is ERC721 {
     public
     view
     returns(bytes32 digest, uint8 hashfunction, uint8 size) {
-        require(entries[msg.sender][counters[msg.sender].current() - 1].digest != 0, "ERC721WithMetadata.getMetadata.Empty data, reverting");
+        require(entries[msg.sender][counters[msg.sender].current() - 1].digest != 0, "ERC721WithPolicy.getMetadata.Empty data, reverting");
 
-        Multihash memory entry = entries[msg.sender][counters[msg.sender].current() - 1];
+        Multihash storage entry = entries[msg.sender][counters[msg.sender].current() - 1];
 
         return (entry.digest, entry.hashFunction, entry.size);
     }

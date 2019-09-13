@@ -1,15 +1,7 @@
 # medata in ...
 
-1. run ganache-cli
+1. run ganache-cli with static addresses
 > ganache-cli \
 -m 'kiss tongue sign vacuum hazard chicken wisdom six salute popular problem spider' \
 -i 999 \
---account="0x3a01cfe5080958515fef2ed0968eee4b63a68ae500a1215e22c816f73e260970,100" \
---account="0xaf1b7cc69a47f78cad4761bf2c3cb0327b37304749a5ede87ab40a2296d7c749,100" \
---account="0x38a6a4645e7466ab7aa4e94f7169b553ac810d9c60f502f6bc92cec4dd7f4a7f,100" \
---account="0x404353860caef7cf583a95a073b72b29cd5f6d8f738daa95034dc78b6b7f879c,100" \
---account="0xf9ef4b3c49923b34ec7b97f5b1b898b324a2c692ce1c8432f96b30247f9b6645,100" \
---account="0x65ae50f34b52289e147ba6c751297b2d80c0a57e5519682a567343ad155f2c0b,100" \
---account="0x28bdb047280446ecb419b2b09575ba75cd13346977b6946d03f60f940d55d740,100" \
---account="0x6c64d633a513ac3d6b4072864ee629624553216a645c7efa6750b57d40182488,100" \
---account="0x8f136961a936a448b81e8d730e892ca90b90167d3705472662c213a55f590667,100" 
+--deterministic

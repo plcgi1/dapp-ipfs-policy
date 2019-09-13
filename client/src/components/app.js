@@ -1,9 +1,11 @@
 import { Component } from 'preact';
 import { Router } from 'preact-router';
 import { getWeb3 } from '../helpers/getWeb3';
+import { getUserFromStorage } from '../services/auth'
 import Header from './header'
 import NotFound from '../routes/not-found';
 import Files from '../routes/files';
+import File from '../routes/files/file';
 import Login from '../routes/login';
 
 export default class App extends Component {
@@ -25,11 +27,18 @@ export default class App extends Component {
 	};
 	
 	componentDidMount () {
+    const user = getUserFromStorage()
+		if (user) {
+			this.setState({ user })
+		}
 		this.setupIpfs()
 		this.setupWeb3()
 	}
 	
-	setupIpfs () {}
+	setupIpfs () {
+		// TODO implement me
+		console.info('Setting setupIpfs...')
+	}
 	
 	async setupWeb3 () {
 		this.setState({ loadingWeb3: true });
@@ -40,7 +49,8 @@ export default class App extends Component {
 				// impossible to work
 				return;
 			}
-			
+			// TODO check accounts exists
+
 			this.setState({ loadingWeb3: false, web3 })
 		} catch (error) {
 			// TODO notification with error
@@ -57,10 +67,11 @@ export default class App extends Component {
 		const { web3, user } = this.state
 		return (
 			<div id="app">
-				{ user ? <Header selectedRoute={this.state.currentUrl} /> : null }
+				{ user ? <Header selectedRoute={this.state.currentUrl} user={user}/> : null }
 				<Router onChange={this.handleRoute}>
-					<Login path="/" web3={web3} onLogged={this.onLogged.bind(this)}/>
-					<Files path="/files" user={user} />
+					<Login path="/login" web3={web3} onLogged={this.onLogged.bind(this)}/>
+					<Files path="/" user={user} />
+					<File path='/files/file/:cid' user={user} />
 					<NotFound default />
 				</Router>
 			</div>
