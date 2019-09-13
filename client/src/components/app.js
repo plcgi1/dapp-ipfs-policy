@@ -5,6 +5,7 @@ import { getUserFromStorage } from '../services/auth'
 import Header from './header'
 import NotFound from '../routes/not-found';
 import Files from '../routes/files';
+import File from '../routes/files/file';
 import Login from '../routes/login';
 
 export default class App extends Component {
@@ -70,6 +71,7 @@ export default class App extends Component {
 				<Router onChange={this.handleRoute}>
 					<Login path="/login" web3={web3} onLogged={this.onLogged.bind(this)}/>
 					<Files path="/" user={user} />
+					<File path='/files/file/:cid' user={user} />
 					<NotFound default />
 				</Router>
 			</div>

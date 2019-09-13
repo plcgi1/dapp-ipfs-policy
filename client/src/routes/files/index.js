@@ -31,7 +31,7 @@ export default class Files extends Component {
                     <List.ItemGraphic>folder</List.ItemGraphic>
                     <List.TextContainer>
                       <List.PrimaryText>{ row.cid }</List.PrimaryText>
-                      <List.SecondaryText>Feb 9, 2014</List.SecondaryText>
+                      <List.SecondaryText>Feb 9, 2014 TODO fill me with filename</List.SecondaryText>
                     </List.TextContainer>
                     { user
                       ? <List.ItemMeta>

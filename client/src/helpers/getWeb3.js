@@ -3,11 +3,11 @@ export const getWeb3 = () => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load', function () {
       let web3 = window.web3;
-      console.log('codepen load' + web3.eth.accounts);
-
-      setTimeout(function() {
-        console.log('codepen timeout ' + web3.eth.accounts);
-      }, 2000)
+      // console.log('codepen load' + web3.eth.accounts);
+      //
+      // setTimeout(function() {
+      //   console.log('codepen timeout ' + web3.eth.accounts);
+      // }, 2000)
 
       // Checking if Web3 has been injected by the browser (Mist/MetaMask)
       if (typeof web3 !== 'undefined') {
