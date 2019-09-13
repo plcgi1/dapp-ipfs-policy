@@ -1,4 +1,6 @@
-export default (config, env /*, helpers */) => {
+export default (config, env, helpers) => {
+  // helpers.setHtmlTemplate(config, 'src/index.html');
+  
   config.devServer.proxy = [
     {
       // proxy requests matching a pattern:
@@ -14,10 +16,12 @@ export default (config, env /*, helpers */) => {
       // optionally mutate request before proxying:
       pathRewrite: function(path, request) {
         // you can modify the outbound proxy request here:
-        delete req.headers.referer;
+        delete request.headers.referer;
 
         // common: remove first path segment: (/api/**)
-        return '/' + path.replace(/^\/[^\/]+\//, '');
+        // return '/' + path.replace(/^\/[^\/]+\//, '');
+        console.info('PATH', path)
+        return path
       },
 
       // optionally mutate proxy response:
@@ -29,7 +33,6 @@ export default (config, env /*, helpers */) => {
     }
   ];
   if (env.isProd) {
-    
     // Make async work
     let babel = config.module.loaders.filter( loader => loader.loader === 'babel-loader')[0].options;
     // Blacklist regenerator within env preset:

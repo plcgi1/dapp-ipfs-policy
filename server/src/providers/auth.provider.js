@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const config = require('../../config/environment')
 const cryptoRandomString = require('crypto-random-string')
@@ -10,7 +9,8 @@ module.exports = class AuthProvider {
 
     const dataStoredInToken = {
       id: user.id,
-      lastJwtString: user.lastJwtString
+      nonce: user.nonce,
+      publicAddress: user.publicAddress
     }
     return {
       expiresIn,
@@ -20,12 +20,6 @@ module.exports = class AuthProvider {
 
   createCookie (tokenData) {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`
-  }
-
-  async comparePassword (inputPassword, realPassword) {
-    const result = await bcrypt.compare(inputPassword, realPassword)
-
-    return result
   }
 
   generateRandomString(length = 16) {

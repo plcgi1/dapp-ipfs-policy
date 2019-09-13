@@ -1,9 +1,9 @@
-const { Thing } = require('../models')
+const { File } = require('../models')
 
 class FileProvider {
   async create (data, options = {}) {
     try {
-      const result = await Thing.create({...data}, { ...options })
+      const result = await File.create({...data}, { ...options })
 
       return result
     } catch (error) {
@@ -14,7 +14,7 @@ class FileProvider {
   async update(id, newValues, options = {}) {
     newValues.updatedAt = new Date();
 
-    const result = await Thing.update(newValues, {
+    const result = await File.update(newValues, {
       where: { id },
       limit: 1,
       ...options
@@ -26,7 +26,7 @@ class FileProvider {
   }
 
   static async get (id) {
-    const result = await Thing.findByPk(id)
+    const result = await File.findByPk(id)
 
     return result
   }
@@ -35,16 +35,16 @@ class FileProvider {
     // TODO implement me
     const where = {}
 
-    Object.keys(Thing.rawAttributes).forEach((name) => {
+    Object.keys(File.rawAttributes).forEach((name) => {
       if (query[name]) {
         where[name] = query[name]
       }
     })
-    const data = await Thing.findAll({
+    const data = await File.findAll({
       where,
       ...paging
     })
-    const count = await Thing.count({ where })
+    const count = await File.count({ where })
     return ({ data, count })
   }
 }

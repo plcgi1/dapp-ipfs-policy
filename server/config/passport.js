@@ -5,7 +5,7 @@ const ExtractJWT = passportJWT.ExtractJwt
 const config = require('./environment')
 const { User } = require('../src/models')
 const logger = require('../src/helpers/logger')
-const { JWT_USER_ATTRIBUTES } = ['id', 'email', 'encrypted_password']
+const { JWT_USER_ATTRIBUTES } = ['id', 'publicAddress', 'nonce']
 const label = 'middlewares.passport'
 
 passport.serializeUser((user, done) => {
@@ -32,7 +32,7 @@ passport.use(
     },
     (jwtPayload, done) => {
       return User.findOne({
-        where: { id: jwtPayload.id, lastJwtString: jwtPayload.lastJwtString },
+        where: { id: jwtPayload.id, nonce: jwtPayload.nonce },
         attributes: JWT_USER_ATTRIBUTES
       })
         .then(user => {
