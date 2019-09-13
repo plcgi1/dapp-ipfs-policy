@@ -1,5 +1,5 @@
-var ERC721WithMetadata = artifacts.require("./ERC721WithMetadata.sol");
+var ERC721WithPolicy = artifacts.require("./ERC721WithPolicy.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(ERC721WithMetadata);
+  deployer.deploy(ERC721WithPolicy);
 };
