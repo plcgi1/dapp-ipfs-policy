@@ -69,18 +69,23 @@ export default class PolicyForm extends Component {
 
   onPublish(e) {
     e.preventDefault()
-    // TODO set status published for json
-    console.info('onPublish')
+
+    const { form } = this.state
+
     const errors = this.validate()
+
+    delete errors[status]
 
     if (errors) {
       this.setState({ errors })
       console.warn('ERRORS', errors)
       return null
     }
-    this.state.form.status = status.published.id
+    form.status = status.published.id
 
-    this.props.onsave(this.state.form)
+    this.props.onsave(form)
+
+    this.setState({ form })
   }
 
   getFieldComponent (name, valid, disabled, form) {
