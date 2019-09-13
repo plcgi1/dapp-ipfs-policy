@@ -1,26 +1,12 @@
 const { User } = require('../models')
-const { USER_STATUSES } = require('../helpers/enums')
-const { generateEmailFromOauthProfile } = require('../helpers/generators')
 
 module.exports = class UserProvider {
-  fillOauthParams (profile) {
-    if (profile.email) {
-      profile.status = USER_STATUSES.ready
-    } else {
-      profile.status = USER_STATUSES.waiting2confirmation
-      // sometimes Facebook doesnt provide email - we need set it here from generate func
-      profile.email = generateEmailFromOauthProfile(profile)
-    }
-
-    return profile
-  }
-
-  async getByEmail (email, options = {}) {
+  async getByAddress (publicAddress, options = {}) {
     let user
     if (options.scope) {
-      user = await User.scope('jwt').findOne({ where: { email } })
+      user = await User.scope('jwt').findOne({ where: { publicAddress } })
     } else {
-      user = await User.findOne({ where: { email } })
+      user = await User.findOne({ where: { publicAddress } })
     }
 
     return user

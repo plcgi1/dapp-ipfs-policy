@@ -1,3 +1,5 @@
+const { USER_STATUSES } = require('../helpers/enums')
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -23,6 +25,21 @@ module.exports = (sequelize, DataTypes) => {
       username: {
         type: DataTypes.STRING,
         unique: true
+      },
+      status: {
+        type: DataTypes.ENUM,
+        values: Object.values(USER_STATUSES),
+        defaultValue: USER_STATUSES.waiting
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: Date.now()
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: Date.now()
       }
     },
     {

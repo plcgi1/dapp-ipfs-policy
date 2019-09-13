@@ -1,69 +1,64 @@
+const ethUtil = require('ethereumjs-util')
+const sigUtil = require('eth-sig-util')
+const { genNonce } = require('../../../helpers/nonce')
 const UserProvider = require('../../../providers/user.provider')
 const AuthProvider = require('../../../providers/auth.provider')
-const config = require('../../../../config/environment')
 const { handleError } = require('../../../helpers/errors')
+const { USER_STATUSES } = require('../../../helpers/enums')
 const logger = require('../../../helpers/logger')
 const label = 'auth.controller'
 
-exports.challenge = async (req, res) => {
-  return res.send(req.metaAuth.challenge)
-}
+exports.create = async (req, res) => {
+  const { signature, publicAddress } = req.body
 
-exports.challengeLogin = async (req, res) => {
-  // TODO address in query required
-  if (req.metaAuth.recovered) {
-    const userProvider = new UserProvider()
-    const user = await userProvider.getByAddress(req, { scope: 'jwt' })
-
-    // Signature matches the cache address/challenge
-    // Authentication is valid, assign JWT, etc.
-    return res.send(req.metaAuth.recovered);
-  } else {
-    // Sig did not match, invalid authentication
-    return res.status(400).send();
+  // TODO move to joi
+  if (!publicAddress) {
+    return handleError(res, { message: 'Request should have publicAddress.' }, 400)
   }
-}
 
-exports.login = async (req, res) => {
   const userProvider = new UserProvider()
   const authProvider = new AuthProvider()
 
-  const { body } = req
-  const { email, password } = body
+  let user = await userProvider.getByAddress(publicAddress)
 
-  try {
-    const user = await userProvider.getByEmail(email, { scope: 'jwt' })
-    if (!user) {
-      return handleError(res, { message: 'No such user.' }, 404)
-    }
-
-    const passwordIsOk = await authProvider.comparePassword(password, user.encrypted_password)
-
-    if (!passwordIsOk) {
-      return handleError(res, { message: 'Password is not correct.' }, 401)
-    }
-    user.lastJwtString = authProvider.generateRandomString()
-
-    await user.save()
-
-    const result = user.toJSON()
-
-    result.token = authProvider.createToken(user)
-
-    delete result.encrypted_password
-
-    return res.json(result)
-  } catch (error) {
-    return handleError(res, error, 500)
+  if (!user) {
+    user = await userProvider.create({ publicAddress, status: USER_STATUSES.waiting, nonce: genNonce() })
+    return res.json(user)
   }
+  if (!signature) {
+    return handleError(res, { message: 'Request should have signature.' }, 400)
+  }
+  const msg = `I am signing my one-time nonce: ${user.nonce}`
+
+  // We now are in possession of msg, publicAddress and signature. We
+  // will use a helper from eth-sig-util to extract the address from the signature
+  const msgBufferHex = ethUtil.bufferToHex(Buffer.from(msg, 'utf8'));
+  const address = sigUtil.recoverPersonalSignature({
+    data: msgBufferHex,
+    sig: signature
+  })
+
+  // The signature verification is successful if the address found with
+  // sigUtil.recoverPersonalSignature matches the initial publicAddress
+  if (address.toLowerCase() !== publicAddress.toLowerCase()) {
+    return handleError(res, { message: `Signature verification failed` }, 401)
+  }
+
+  user.nonce = genNonce()
+  user.status = USER_STATUSES.ready
+
+  await user.save()
+
+  const accessToken = authProvider.createToken(user)
+
+  return res.json({ accessToken, nonce: user.nonce, publicAddress: user.publicAddress })
 }
 
 exports.logout = async (req, res, next) => {
   const { user } = req
 
-  const authProvider = new AuthProvider()
   try {
-    user.lastJwtString = authProvider.generateRandomString()
+    user.nonce = genNonce()
 
     await user.save()
 

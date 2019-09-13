@@ -6,22 +6,19 @@ const passport = require('passport')
 
 const expressJoi = require('express-joi-validator')
 
-const controller = require(path.resolve('./src/controllers/api/things/file.controller'))
+const controller = require(path.resolve('./src/controllers/api/files/file.controller'))
 
-const { create, update } = require(path.resolve('./src/controllers/api/things/file.schema'))
-
-const { restrict4write } = require('../../../middleware/restrict4write')
+const { create } = require(path.resolve('./src/controllers/api/files/file.schema'))
 
 const router = express.Router()
 
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  restrict4write,
   expressJoi(create),
   controller.create
 )
 
-router.get('/', passport.authenticate('jwt', { session: false }), controller.get)
+router.get('/', controller.get)
 
 module.exports = router

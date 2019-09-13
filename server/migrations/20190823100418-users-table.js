@@ -1,3 +1,5 @@
+const { USER_STATUSES } = require('../src/helpers/enums')
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Users', {
@@ -22,6 +24,21 @@ module.exports = {
       username: {
         type: Sequelize.STRING,
         unique: true
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: Object.values(USER_STATUSES),
+        defaultValue: USER_STATUSES.waiting
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Date.now()
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Date.now()
       }
     }).then(() => {
       return queryInterface.addIndex('Users', ['publicAddress'], { indicesType: 'UNIQUE' })

@@ -29,8 +29,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: Object.values(THING_STATUSES),
-        defaultValue: THING_STATUSES.waiting
+        values: Object.values(FILE_STATUSES),
+        defaultValue: FILE_STATUSES.draft
       },
       createdAt: {
         allowNull: false,

@@ -1,5 +1,4 @@
 const Joi = require('joi')
-const { THING_PROVIDERS } = require('../../../helpers/enums')
 
 module.exports = {
   create: {

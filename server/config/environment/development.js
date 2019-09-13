@@ -1,15 +1,14 @@
 module.exports = {
   port: 3000,
   serverUrl: 'http://localhost:3000',
-  frontendUrl: 'http://localhost:3001',
   db: {
     dialect: 'postgres',
-    username: process.env.DBUSER || 'postgres',
-    database: process.env.DBNAME || 'advicely',
+    username: process.env.DBUSER,
+    database: process.env.DBNAME,
     password: process.env.DBPASSWORD,
     port: process.env.DBPORT,
     operatorsAliases: false,
-    host: process.env.DBHOST || '127.0.0.1',
+    host: process.env.DBHOST,
     logging: val => console.log(val + '\n')
   },
   secrets: {
@@ -29,7 +28,7 @@ module.exports = {
   },
   auth: {
     metamask: {
-
+      // TODO check me
     }
   }
 }
