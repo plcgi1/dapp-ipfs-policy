@@ -3,11 +3,11 @@ const truffleAssert = require('truffle-assertions');
 
 const ERC721WithPolicy = artifacts.require('./ERC721WithPolicy.sol');
 
-let ERC721WithMetadataInstance;
+let contractInstance;
 
 contract('ERC721WithMetadata', (accounts) => {
   beforeEach(async () => {
-    contractInstance = await ERC721WithPolicy.new();
+    contractInstance = await ERC721WithPolicy.new('one', 'two');
   });
 
   const ipfsHashes = [
