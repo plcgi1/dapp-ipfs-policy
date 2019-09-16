@@ -100,4 +100,9 @@ contract ERC721WithPolicy is ERC721, ERC721Mintable {
     returns(uint256 _length) {
         return counters[msg.sender].current();
     }
+
+    // QmahqCsAUAw7zMv6P6Ae8PjCTck7taQA6FgGQLnWdKG7U8
+//    function baseTokenURI() public pure returns (string memory) {
+//        return "QmahqCsAUAw7zMv6P6Ae8PjCTck7taQA6FgGQLnWdKG7U8";
+//    }
 }

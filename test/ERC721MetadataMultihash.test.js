@@ -88,4 +88,9 @@ contract('ERC721WithMetadata', (accounts) => {
       }
     }
   });
+  
+  // it('test for long string', async () => {
+  //   const hash = await contractInstance.baseTokenURI();
+  //   assert.equal(hash, ipfsHashes[0], 'Hash 1 equal');
+  // });
 });

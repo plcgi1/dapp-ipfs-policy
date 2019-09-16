@@ -1,5 +1,5 @@
 import { Component } from 'preact';
-import { Router } from 'preact-router';
+import { Router, route } from 'preact-router';
 import { getWeb3 } from '../helpers/getWeb3';
 import { getUserFromStorage } from '../services/auth'
 import Header from './header'
@@ -28,11 +28,15 @@ export default class App extends Component {
 	
 	componentDidMount () {
     const user = getUserFromStorage()
-		if (user) {
-			this.setState({ user })
-		}
+		
 		this.setupIpfs()
 		this.setupWeb3()
+		
+		if (user) {
+			this.setState({ user })
+		} else {
+			route('/login', true)
+		}
 	}
 	
 	setupIpfs () {
