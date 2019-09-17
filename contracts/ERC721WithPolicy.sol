@@ -3,7 +3,6 @@ pragma solidity ^0.5.8;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 // tests fails with such ansector
 import "@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
-// import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721Mintable.sol";
 import "@openzeppelin/contracts/drafts/Counters.sol";
 
