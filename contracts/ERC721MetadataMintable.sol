@@ -10,15 +10,24 @@ import "@openzeppelin/contracts/access/roles/MinterRole.sol";
  */
 contract ERC721MetadataMintable is ERC721Metadata, MinterRole {
     string _baseUri;
+    address _managerAddress;
 
     // Optional mapping for token URIs
     mapping (uint256 => string) private _tokenURIs;
+    // TODO checkme
     mapping (uint256 => address) private _tokenOwner;
 
     constructor (string memory _name, string memory _symbol) public ERC721Metadata(_name, _symbol){
         // solhint-disable-previous-line no-empty-blocks
     }
 
+    function addMinter (address _address) public {
+        require(
+            msg.sender == _managerAddress,
+            'ERC721MetadataMintable.addMinter.Address from must be from manager contract only'
+        );
+        super.addMinter(_address);
+    }
     /**
      * @dev Function to mint tokens.
      * @param to The address that will receive the minted tokens.
@@ -46,5 +55,14 @@ contract ERC721MetadataMintable is ERC721Metadata, MinterRole {
     returns(string memory url, string memory cid)
     {
         return (_baseUri, _tokenURIs[_tokenId]);
+    }
+
+    function setManagerAddress(address _address) public {
+        _managerAddress = _address;
+        super.addMinter(_address);
+    }
+
+    function getManagerAddress() public view returns (address _address){
+        return _managerAddress;
     }
 }
