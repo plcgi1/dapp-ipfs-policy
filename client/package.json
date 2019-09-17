@@ -41,7 +41,6 @@
     "preact-render-to-string": "^4.1.0",
     "preact-router": "^2.5.7",
     "truffle-contract": "^4.0.31",
-    "web3": "^1.2.1",
     "webpack-dev-server": "^3.8.0"
   },
   "jest": {

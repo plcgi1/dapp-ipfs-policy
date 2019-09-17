@@ -31,66 +31,63 @@ contract('ERC721WithMetadata', (accounts) => {
 
     return getMultihashFromContractResponse(response);
   }
-  it('should fire event when new has is set', async () => {
-    const tx = await setIPFSHash(accounts[0], ipfsHashes[0]);
+  describe('ERC721 with multihash', () => {
+    it('should fire event when new has is set', async () => {
+      const tx = await setIPFSHash(accounts[0], ipfsHashes[0]);
 
-    truffleAssert.eventEmitted(tx, 'EntrySet', (ev) => {
-      const hash = getMultihashFromBytes32(ev)
+      truffleAssert.eventEmitted(tx, 'EntrySet', (ev) => {
+        const hash = getMultihashFromBytes32(ev)
 
-      return hash === ipfsHashes[0];
+        return hash === ipfsHashes[0];
+      });
     });
-  });
 
-  it('should get IPFS hashes after setting for accounts', async () => {
-    for (const account of accounts) {
-      await setIPFSHash(account, ipfsHashes[0]);
-
-      await setIPFSHash(account, ipfsHashes[1]);
-
-      const hash1 = await getIPFSHash(account, 0)
-      const hash2 = await getIPFSHash(account, 1)
-
-      assert.equal(hash1, ipfsHashes[0], 'Hash 1 equal');
-      assert.equal(hash2, ipfsHashes[1], 'Hash 2 equal');
-    }
-  });
-
-  it('should get multihashes length', async () => {
-    await setIPFSHash(accounts[0], ipfsHashes[0]);
-    await setIPFSHash(accounts[0], ipfsHashes[1]);
-
-    const count = await contractInstance.getLengthForCurrentAccount({ from: accounts[0] });
-    const count0 = await contractInstance.getLengthForCurrentAccount({ from: accounts[1] });
-
-    assert.equal(count.toNumber(), 2, 'Number of multihashes is 2 for accounts[0]')
-    assert.equal(count0.toNumber(), 0, 'Number of multihashes is 0 for accounts[1]')
-  });
-
-  it('should get IPFS hashes after setting for accounts with invalid values', async () => {
-    for (const account of accounts) {
-      await setIPFSHash(account, ipfsHashes[0]);
-      const hash = await getIPFSHashForCurrent(account);
-
-      assert.equal(hash, ipfsHashes[0], 'Hash 1 equal');
-    }
-  });
-
-  it('should get IPFS hashes after setting for accounts with invalid values', async () => {
-    for (const account of accounts) {
-      try {
+    it('should get IPFS hashes after setting for accounts', async () => {
+      for (const account of accounts) {
         await setIPFSHash(account, ipfsHashes[0]);
-        await getIPFSHash(account, 1)
-      } catch (error) {
-        assert.ok(
-          /ERC721WithPolicy\.getMetadataByCursor\.Empty data/.test(error.message),
-          'The contract is throwing which is the expected behaviour when you try to overflow'
-        )
+
+        await setIPFSHash(account, ipfsHashes[1]);
+
+        const hash1 = await getIPFSHash(account, 0)
+        const hash2 = await getIPFSHash(account, 1)
+
+        assert.equal(hash1, ipfsHashes[0], 'Hash 1 equal');
+        assert.equal(hash2, ipfsHashes[1], 'Hash 2 equal');
       }
-    }
-  });
-  
-  // it('test for long string', async () => {
-  //   const hash = await contractInstance.baseTokenURI();
-  //   assert.equal(hash, ipfsHashes[0], 'Hash 1 equal');
-  // });
+    });
+
+    it('should get multihashes length', async () => {
+      await setIPFSHash(accounts[0], ipfsHashes[0]);
+      await setIPFSHash(accounts[0], ipfsHashes[1]);
+
+      const count = await contractInstance.getLengthForCurrentAccount({ from: accounts[0] });
+      const count0 = await contractInstance.getLengthForCurrentAccount({ from: accounts[1] });
+
+      assert.equal(count.toNumber(), 2, 'Number of multihashes is 2 for accounts[0]')
+      assert.equal(count0.toNumber(), 0, 'Number of multihashes is 0 for accounts[1]')
+    });
+
+    it('should get IPFS hashes after setting for accounts with invalid values', async () => {
+      for (const account of accounts) {
+        await setIPFSHash(account, ipfsHashes[0]);
+        const hash = await getIPFSHashForCurrent(account);
+
+        assert.equal(hash, ipfsHashes[0], 'Hash 1 equal');
+      }
+    });
+
+    it('should get IPFS hashes after setting for accounts with invalid values', async () => {
+      for (const account of accounts) {
+        try {
+          await setIPFSHash(account, ipfsHashes[0]);
+          await getIPFSHash(account, 1)
+        } catch (error) {
+          assert.ok(
+            /ERC721WithPolicy\.getMetadataByCursor\.Empty data/.test(error.message),
+            'The contract is throwing which is the expected behaviour when you try to overflow'
+          )
+        }
+      }
+    });
+  })
 });
