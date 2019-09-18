@@ -16,6 +16,8 @@ class App extends React.Component {
 
   async componentDidMount () {
     const model = new MetadataModel()
+    
+    model.initIpfs()
 
     this.setState({ model })
 
@@ -64,8 +66,8 @@ class App extends React.Component {
     return model
         ? <div className='public'>
         <Layout>
-          <Header>
-            <ContractView />
+          <Header style={{ background: 'white' }}>
+            <ContractView model={model}/>
           </Header>
           <Content>
             <PolicyForm

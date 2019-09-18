@@ -1,3 +1,5 @@
+import IpfsHttpClient from 'ipfs-http-client'
+import { Buffer } from 'buffer/'
 import { status } from '../helpers/enums'
 
 const schema = {
@@ -40,9 +42,15 @@ const schema = {
 
 class Metadata {
   constructor () {
-    console.info('TODO init ipfs here')
-    console.info('TODO init web3 here')
     this.schema = schema
+  }
+
+  initIpfs () {
+    this.ipfs = IpfsHttpClient('localhost', '5001')
+  }
+
+  initWeb3 () {
+    console.info('TODO init web3 here')
   }
 
   setSchema (newSchema) {
@@ -53,11 +61,14 @@ class Metadata {
     Object.keys(values).forEach(key => {
       this.schema.properties[key].value = values[key]
     })
-    return new Promise(( resolve, reject) => {
+    return new Promise(async ( resolve, reject) => {
       if (values.status === status.published.id) {
-        console.info('status', values.status)
         // save to ipfs
-        // payload.cid = await this.ipfs.addJSON(payload)
+        const content = Buffer.from(JSON.stringify(this.schema))
+        const results = await this.ipfs.add(content)
+        this.schema.cid = results[0].hash // "Qm...WW"
+
+        window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
         // TODO mint to contract
 
