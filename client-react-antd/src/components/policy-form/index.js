@@ -12,6 +12,14 @@ class PolicyForm extends React.Component {
     console.info('Implement me.PolicyForm.componentDidMount')
   }
 
+  onPublish (e) {
+    const { setFieldsValue, getFieldValue } = this.props.form
+
+    setFieldsValue({ status: status.published.id })
+
+    this.props.onSubmit(this.props.form)()
+  }
+
   getFieldComponent (property, disabled) {
     const { model } = this.props
     const schema = model.schema
@@ -92,7 +100,7 @@ class PolicyForm extends React.Component {
         >
           <Button htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
 
-          <Button size='large' style={{ width: 100 }}>Mint</Button>
+          <Button size='large' onClick={this.onPublish.bind(this)} style={{ width: 100 }}>Mint</Button>
         </Form.Item>
       </Form>
     </Card>

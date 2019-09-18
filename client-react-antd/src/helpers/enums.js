@@ -12,6 +12,3 @@ export const status = {
     label: 'Published'
   }
 }
-export const  brand = {
-  title: 'Brand.Title'
-}

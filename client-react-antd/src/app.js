@@ -14,7 +14,7 @@ class App extends React.Component {
     fetching: false
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     const model = new MetadataModel()
 
     this.setState({ model })
@@ -23,23 +23,14 @@ class App extends React.Component {
     if (form) {
       model.setSchema(form)
     }
-    console.info('TODO. App.componentDidMount. create onSubmit props for components')
     console.info('TODO. App.componentDidMount. create ContractInfo props for components')
-  }
-  
-  onChange (key, form) {
-    
-    // return (value) => {
-    //   setSelected(key, value, game, data)
-    //
-    //   this.setState({game})
-    // }
   }
   
   onSubmit (form) {
     return (e) => {
-      e.preventDefault()
-    
+      if (e) {
+        e.preventDefault()
+      }
       const { validateFields } = form
       const { model } = this.state
 

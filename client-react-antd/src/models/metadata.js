@@ -55,6 +55,7 @@ class Metadata {
     })
     return new Promise(( resolve, reject) => {
       if (values.status === status.published.id) {
+        console.info('status', values.status)
         // save to ipfs
         // payload.cid = await this.ipfs.addJSON(payload)
 
