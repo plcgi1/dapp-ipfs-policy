@@ -34,6 +34,20 @@ contract('TokenManager', (accounts) => {
 
       assert.equal(isMinter, true, 'Minter added for contract');
     });
-    // TODO add thrown tests
+
+    it('restrict addMinter from contractInstance', async () => {
+      try {
+        await contractInstance.addMinter(accounts[1])
+
+        const isMinter = await contractInstance.isMinter(accounts[1]);
+
+        assert.equal(isMinter, false, 'Minter not added for contract');
+      } catch (error) {
+        assert.ok(
+          /ERC721MetadataMintable\.addMinter/.test(error.message),
+          'The contract is throwing which is the expected behaviour when you try to addMinter contractInstance'
+        )
+      }
+    });
   })
 });
