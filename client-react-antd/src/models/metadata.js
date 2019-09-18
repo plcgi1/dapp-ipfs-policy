@@ -4,19 +4,19 @@ const schema = {
   title: 'Asset Metadata',
   type: 'object',
   cid: null,
-  "properties": {
-    "name": {
-      "type": "string",
-      "fieldType": "text",
-      "description": "Identifies the asset to which this NFT represents",
+  properties: {
+    name: {
+      type: "string",
+      fieldType: "text",
+      description: "Identifies the asset to which this NFT represents",
     },
-    "description": {
-      "type": "string",
-      "fieldType": "text",
-      "description": "Describes the asset to which this NFT represents",
+    description: {
+      type: "string",
+      fieldType: "text",
+      description: "Describes the asset to which this NFT represents",
     },
-    "carrier": {
-      "type": "string",
+    carrier: {
+      type: "string",
       "fieldType": "text",
       "description": "Describes the carrier which takes the primary risk",
     },
@@ -45,25 +45,28 @@ class Metadata {
     this.schema = schema
   }
 
-  setValues (form) {
-    Object.keys(form).forEach((key) => {
-      this.schema.properties[key].value = form[key]
-    })
+  setSchema (newSchema) {
+    this.schema = newSchema
   }
 
-  async save (payload) {
-    if (payload.status === status.published.id) {
-      // save to ipfs
-      // payload.cid = await this.ipfs.addJSON(payload)
+  async save (values) {
+    Object.keys(values).forEach(key => {
+      this.schema.properties[key].value = values[key]
+    })
+    return new Promise(( resolve, reject) => {
+      if (values.status === status.published.id) {
+        // save to ipfs
+        // payload.cid = await this.ipfs.addJSON(payload)
 
-      // TODO mint to contract
+        // TODO mint to contract
 
-      return payload
-    }
+        return resolve(this)
+      }
 
-    window.localStorage.setItem('metadata', JSON.stringify(payload));
+      window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
-    return payload;
+      return resolve(this);
+    })
   }
 
   get () {
