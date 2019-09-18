@@ -2,7 +2,7 @@ pragma solidity ^0.5.8;
 
 import "./ERC721MetadataMintable.sol";
 
-contract TokenManager {
+contract TokenManager is Ownable {
     ERC721MetadataMintable managebleContract;
     address _address;
 
@@ -10,16 +10,12 @@ contract TokenManager {
         managebleContract = ERC721MetadataMintable(__address);
 
         _address = __address;
-        // TODO check me - why doesnot work
-        // addMinter(address(this));
     }
 
-    // TODO only owner
     function addMinter(address to) public {
         managebleContract.addMinter(to);
     }
 
-    // for tests only
     function getManagebleContract() public view returns (address contractAddress){
         return _address;
     }

@@ -2,20 +2,19 @@ pragma solidity ^0.5.8;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
 import "@openzeppelin/contracts/access/roles/MinterRole.sol";
+import "@openzeppelin/contracts/ownership/Ownable.sol";
 
 /**
  * @title
  * @author
  *
  */
-contract ERC721MetadataMintable is ERC721Metadata, MinterRole {
+contract ERC721MetadataMintable is ERC721Metadata, MinterRole, Ownable {
     string _baseUri;
     address _managerAddress;
 
     // Optional mapping for token URIs
     mapping (uint256 => string) private _tokenURIs;
-    // TODO checkme
-    mapping (uint256 => address) private _tokenOwner;
 
     constructor (string memory _name, string memory _symbol) public ERC721Metadata(_name, _symbol){
         // solhint-disable-previous-line no-empty-blocks
@@ -57,12 +56,13 @@ contract ERC721MetadataMintable is ERC721Metadata, MinterRole {
         return (_baseUri, _tokenURIs[_tokenId]);
     }
 
-    function setManagerAddress(address _address) public {
+    function setManagerAddress(address _address) public onlyMinter {
         _managerAddress = _address;
+        // add management contract address to minters
         super.addMinter(_address);
     }
 
-    function getManagerAddress() public view returns (address _address){
+    function getManagerAddress() public view onlyOwner returns (address _address){
         return _managerAddress;
     }
 }

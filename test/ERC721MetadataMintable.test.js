@@ -27,5 +27,15 @@ contract('ERC721MetadataMintable', (accounts) => {
       assert.equal(result.cid, ipfsHashes[0], 'CID 1 equal');
       assert.equal(result.url, baseUrl, 'baseUrl is equal')
     });
+    it('should mint with account[0] if we call addMinter', async () => {
+      const account = accounts[0]
+
+      await contractInstance.mint(account, 1, ipfsHashes[0], baseUrl, { from: account })
+
+      const result = await contractInstance.tokenMetadata(1)
+
+      assert.equal(result.cid, ipfsHashes[0], 'CID 1 equal');
+      assert.equal(result.url, baseUrl, 'baseUrl is equal')
+    });
   })
 });
