@@ -1,7 +1,10 @@
 import IpfsHttpClient from 'ipfs-http-client'
 import { Buffer } from 'buffer/'
+import TruffleContract from '@truffle/contract'
 import { status } from '../helpers/enums'
 import { getWeb3 } from '../helpers/getWeb3'
+import ERC721abi from '../contracts/ERC721MetadataMintable.json'
+import TokenManagerabi from '../contracts/TokenManager.json'
 
 const schema = {
   title: 'Asset Metadata',
@@ -70,6 +73,16 @@ class Metadata {
       })
   }
 
+  initContract () {
+    this.contracts = {
+      erc721: TruffleContract(ERC721abi),
+      tokenManager: TruffleContract(TokenManagerabi)
+    };
+
+    this.contracts.erc721.setProvider(this.web3.currentProvider)
+    this.contracts.tokenManager.setProvider(this.web3.currentProvider)
+  }
+
   getAccountId () {
     return this.web3 ? this.web3.eth.defaultAccount : null
   }
@@ -92,9 +105,22 @@ class Metadata {
 
           window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
-          // TODO mint to contract
+          // address to, uint256 tokenId, string memory cid, string memory baseUri
+          const instance = await this.contracts.tokenManager.deployed()
+          const minted = await instance.mint(
+            this.web3.eth.defaultAccount,
+            1000,
+            this.schema.cid,
+            'http://localhost:8080/ipfs',
+            { from: this.web3.eth.defaultAccount }
+          )
           return resolve(this)
         } catch (error) {
+          // reset schema status
+          this.schema.properties.status.value = status.draft.id
+
+          window.localStorage.setItem('metadata', JSON.stringify(this.schema));
+
           return reject(error)
         }
       }

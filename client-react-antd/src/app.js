@@ -22,6 +22,8 @@ class App extends React.Component {
 
     await model.initWeb3()
 
+    model.initContract()
+
     const form = model.get()
 
     if (form) {
@@ -57,7 +59,7 @@ class App extends React.Component {
             })
           })
           .catch((e) => {
-            this.setState({ fetching: false })
+            this.setState({ fetching: false, model })
 
             return notification.error({
               message: e.message

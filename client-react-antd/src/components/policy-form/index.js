@@ -36,7 +36,7 @@ class PolicyForm extends React.Component {
           })(
             <Input
               name={property}
-              disabled={schema.cid || disabled}
+              disabled={schema.properties.status === status.published.id || disabled}
               placeholder={schema.properties[property].description}
             />
           )
@@ -61,7 +61,7 @@ class PolicyForm extends React.Component {
             <Select
               name={property}
               hintText="Select a status"
-              disabled={schema.cid || disabled}
+              disabled={schema.properties.status === status.published.id || disabled}
               defaultValue={status.draft.id}
               style={{minWidth: '100%'}}
               box>
@@ -99,9 +99,15 @@ class PolicyForm extends React.Component {
             sm: { span: 16, offset: 8 },
           }}
         >
-          <Button disabled={schema.cid || disabled} htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
+          <Button disabled={schema.properties.status === status.published.id || disabled} htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
 
-          <Button disabled={schema.cid || disabled} size='large' onClick={this.onPublish.bind(this)} style={{ width: 100 }}>Mint</Button>
+          <Button
+            disabled={schema.properties.status === status.published.id || disabled}
+            size='large'
+            onClick={this.onPublish.bind(this)}
+            style={{ width: 100 }}>
+            Mint
+          </Button>
         </Form.Item>
       </Form>
     </Card>
