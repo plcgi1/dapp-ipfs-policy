@@ -34,6 +34,10 @@ contract ERC721MetadataMintable is ERC721Metadata, MinterRole, Ownable {
      * @return A boolean that indicates if the operation was successful.
      */
     function mint(address to, uint256 tokenId, string memory cid, string memory baseUri) public onlyMinter returns (bool) {
+        require(
+            msg.sender == _managerAddress,
+            'ERC721MetadataMintable.mint.Address from must be from manager contract only'
+        );
         _tokenURIs[tokenId] = cid;
         _baseUri = baseUri;
 

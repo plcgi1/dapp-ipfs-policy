@@ -7,6 +7,13 @@ let contractInstance;
 let managerInstance;
 
 contract('TokenManager', (accounts) => {
+  const ipfsHashes = [
+    'QmahqCsAUAw7zMv6P6Ae8PjCTck7taQA6FgGQLnWdKG7U8',
+    'Qmb4atcgbbN5v4CDJ8nz5QG5L2pgwSTLd3raDrnyhLjnUH'
+  ];
+
+  let baseUrl = 'http://ipfs.server'
+
   beforeEach(async () => {
     contractInstance = await ERC721MetadataMintable.new('name', 'symbol');
     managerInstance = await TokenManager.new(contractInstance.address);
@@ -48,6 +55,28 @@ contract('TokenManager', (accounts) => {
           'The contract is throwing which is the expected behaviour when you try to addMinter contractInstance'
         )
       }
+    });
+    it('restrict mint from contractInstance', async () => {
+      try {
+        await managerInstance.addMinter(accounts[1])
+
+        await contractInstance.mint(accounts[1], 1, ipfsHashes[0], baseUrl, { from: accounts[1] })
+      } catch (error) {
+        assert.ok(
+          /ERC721MetadataMintable\.mint/.test(error.message),
+          'The contract is throwing which is the expected behaviour when you try to addMinter contractInstance'
+        )
+      }
+    });
+    it('should mint with account[0] if we call addMinter', async () => {
+      const account = accounts[0]
+
+      await managerInstance.mint(account, 1, ipfsHashes[0], baseUrl, { from: account })
+
+      const result = await contractInstance.tokenMetadata(1)
+
+      assert.equal(result.cid, ipfsHashes[0], 'CID 1 equal');
+      assert.equal(result.url, baseUrl, 'baseUrl is equal')
     });
   })
 });

@@ -17,25 +17,19 @@ contract('ERC721MetadataMintable', (accounts) => {
   ];
 
   describe('ERC721 with metadata on baseUrl, CID', () => {
-    it('should get IPFS hashes after setting for accounts', async () => {
-      const account = accounts[0]
+    it('should exception thrown if addMinter from ERC contract address', async () => {
+      try {
+        await contractInstance.addMinter(accounts[1])
 
-      await contractInstance.mint(account, 1, ipfsHashes[0], baseUrl, { from: account })
+        const isMinter = await contractInstance.isMinter(accounts[1]);
 
-      const result = await contractInstance.tokenMetadata(1)
-
-      assert.equal(result.cid, ipfsHashes[0], 'CID 1 equal');
-      assert.equal(result.url, baseUrl, 'baseUrl is equal')
-    });
-    it('should mint with account[0] if we call addMinter', async () => {
-      const account = accounts[0]
-
-      await contractInstance.mint(account, 1, ipfsHashes[0], baseUrl, { from: account })
-
-      const result = await contractInstance.tokenMetadata(1)
-
-      assert.equal(result.cid, ipfsHashes[0], 'CID 1 equal');
-      assert.equal(result.url, baseUrl, 'baseUrl is equal')
+        assert.equal(isMinter, false, 'Minter not added for contract');
+      } catch (error) {
+        assert.ok(
+          /ERC721MetadataMintable\.addMinter/.test(error.message),
+          'The contract is throwing which is the expected behaviour when you try to addMinter contractInstance'
+        )
+      }
     });
   })
 });

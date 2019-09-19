@@ -12,6 +12,7 @@ class ContractView extends React.Component {
 
     return <Row gutter={16}>
       <Col span={6}>
+        {/* TODO tooltip ??? */}
         <Statistic title="Current account" value={shortAddr}/>
       </Col>
       <Col span={6}>

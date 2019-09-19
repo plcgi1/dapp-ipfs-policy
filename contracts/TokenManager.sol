@@ -16,6 +16,10 @@ contract TokenManager is Ownable {
         managebleContract.addMinter(to);
     }
 
+    function mint(address to, uint256 tokenId, string memory cid, string memory baseUri) public returns (bool) {
+        return managebleContract.mint(to, tokenId, cid, baseUri);
+    }
+
     function getManagebleContract() public view returns (address contractAddress){
         return _address;
     }
