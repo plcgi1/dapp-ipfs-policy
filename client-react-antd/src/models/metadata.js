@@ -1,6 +1,7 @@
 import IpfsHttpClient from 'ipfs-http-client'
 import { Buffer } from 'buffer/'
 import { status } from '../helpers/enums'
+import { getWeb3 } from '../helpers/getWeb3'
 
 const schema = {
   title: 'Asset Metadata',
@@ -46,11 +47,31 @@ class Metadata {
   }
 
   initIpfs () {
+    // TODO make it configurable
     this.ipfs = IpfsHttpClient('localhost', '5001')
   }
 
-  initWeb3 () {
-    console.info('TODO init web3 here')
+  async initWeb3 () {
+    return getWeb3()
+      .then((web3) => {
+
+        return web3.eth.getAccounts((err, accounts) => {
+          if (err) {
+            throw new Error(err);
+          }
+
+          web3.eth.defaultAccount = accounts[0];
+          console.log('getWeb3.Using account:', web3.eth.defaultAccount);
+          this.web3 = web3
+        });
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  }
+
+  getAccountId () {
+    return this.web3 ? this.web3.eth.defaultAccount : null
   }
 
   setSchema (newSchema) {
@@ -65,14 +86,17 @@ class Metadata {
       if (values.status === status.published.id) {
         // save to ipfs
         const content = Buffer.from(JSON.stringify(this.schema))
-        const results = await this.ipfs.add(content)
-        this.schema.cid = results[0].hash // "Qm...WW"
+        try {
+          const results = await this.ipfs.add(content)
+          this.schema.cid = results[0].hash // "Qm...WW"
 
-        window.localStorage.setItem('metadata', JSON.stringify(this.schema));
+          window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
-        // TODO mint to contract
-
-        return resolve(this)
+          // TODO mint to contract
+          return resolve(this)
+        } catch (error) {
+          return reject(error)
+        }
       }
 
       window.localStorage.setItem('metadata', JSON.stringify(this.schema));

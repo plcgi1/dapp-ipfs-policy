@@ -11,7 +11,8 @@ const { Header, Content } = Layout;
 class App extends React.Component {
   state = {
     model: null,
-    fetching: false
+    fetching: false,
+    account: null
   }
 
   async componentDidMount () {
@@ -19,12 +20,17 @@ class App extends React.Component {
     
     model.initIpfs()
 
-    this.setState({ model })
+    await model.initWeb3()
 
     const form = model.get()
+
     if (form) {
       model.setSchema(form)
     }
+    const account = model.getAccountId()
+
+    this.setState({ model, account })
+
     console.info('TODO. App.componentDidMount. create ContractInfo props for components')
   }
   
@@ -52,6 +58,7 @@ class App extends React.Component {
           })
           .catch((e) => {
             this.setState({ fetching: false })
+
             return notification.error({
               message: e.message
             })
@@ -61,13 +68,13 @@ class App extends React.Component {
   }
   
   render () {
-    const { model, fetching } = this.state
+    const { model, fetching, account } = this.state
 
     return model
         ? <div className='public'>
         <Layout>
           <Header style={{ background: 'white' }}>
-            <ContractView model={model}/>
+            <ContractView model={model} account={account}/>
           </Header>
           <Content>
             <PolicyForm

@@ -13,7 +13,7 @@ class PolicyForm extends React.Component {
   }
 
   onPublish (e) {
-    const { setFieldsValue, getFieldValue } = this.props.form
+    const { setFieldsValue } = this.props.form
 
     setFieldsValue({ status: status.published.id })
 
@@ -82,6 +82,7 @@ class PolicyForm extends React.Component {
 
   render () {
     const { model, disabled, form, onSubmit } = this.props
+    const { schema } = model
 
     return <Card style={{width: 600, margin: '0 auto'}}>
       <Form layout='vertical' onSubmit={onSubmit(form)}>
@@ -98,9 +99,9 @@ class PolicyForm extends React.Component {
             sm: { span: 16, offset: 8 },
           }}
         >
-          <Button htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
+          <Button disabled={schema.cid || disabled} htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
 
-          <Button size='large' onClick={this.onPublish.bind(this)} style={{ width: 100 }}>Mint</Button>
+          <Button disabled={schema.cid || disabled} size='large' onClick={this.onPublish.bind(this)} style={{ width: 100 }}>Mint</Button>
         </Form.Item>
       </Form>
     </Card>
