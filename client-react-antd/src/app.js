@@ -22,7 +22,7 @@ class App extends React.Component {
 
     await model.initWeb3()
 
-    model.initContract()
+    await model.initContract()
 
     const form = model.get()
 

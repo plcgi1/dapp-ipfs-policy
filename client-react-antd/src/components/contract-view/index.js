@@ -9,21 +9,25 @@ class ContractView extends React.Component {
 
     const shortAddr = account ? stringShort(account) : 'Not set yet'
     const shortCid = model.schema.cid ? stringShort(model.schema.cid) : 'Not set yet'
+    const tokenInfo = model.getTokenInfo()
 
     return <Row gutter={16}>
-      <Col span={6}>
+      <Col span={4}>
         {/* TODO tooltip ??? */}
         <Statistic title="Current account" value={shortAddr}/>
       </Col>
-      <Col span={6}>
+      <Col span={4}>
         {/* TODO short link with full link by click */}
         <Statistic title="policy CID" value={shortCid} />
       </Col>
-      <Col span={6}>
-        <Statistic title="Token name" value={name ? name : 'Not set yet'}/>
+      <Col span={4}>
+        <Statistic title="Token contract" value={tokenInfo.contractAddress ? stringShort(tokenInfo.contractAddress) : 'Not set yet'}/>
       </Col>
-      <Col span={6}>
-        <Statistic title="Token Symbol" value={symbol ? symbol : 'Not set yet'}/>
+      <Col span={4}>
+        <Statistic title="Token name" value={tokenInfo.name ? tokenInfo.name : 'Not set yet'}/>
+      </Col>
+      <Col span={4}>
+        <Statistic title="Token Symbol" value={tokenInfo.symbol ? tokenInfo.symbol : 'Not set yet'}/>
       </Col>
     </Row>
   }

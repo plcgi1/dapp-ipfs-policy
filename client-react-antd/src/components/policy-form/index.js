@@ -99,15 +99,28 @@ class PolicyForm extends React.Component {
             sm: { span: 16, offset: 8 },
           }}
         >
-          <Button disabled={schema.properties.status === status.published.id || disabled} htmlType="submit" size='large' style={{ width: 100 }} type='primary'>Save</Button>
-
           <Button
-            disabled={schema.properties.status === status.published.id || disabled}
+            disabled={schema.properties.status.value === status.published.id || disabled}
+            htmlType="submit"
             size='large'
-            onClick={this.onPublish.bind(this)}
-            style={{ width: 100 }}>
-            Mint
+            style={{ width: 120 }}
+            type='primary'>
+            Save
           </Button>
+
+          {
+            (schema.properties.status.value === status.approved.id
+              || schema.properties.status.value === status.published.id)
+             ? <Button
+                disabled={disabled}
+                size='large'
+                onClick={this.onPublish.bind(this)}
+                style={{ width: 120 }}>
+                Mint
+              </Button>
+             : null
+          }
+          
         </Form.Item>
       </Form>
     </Card>

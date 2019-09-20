@@ -73,7 +73,7 @@ class Metadata {
       })
   }
 
-  initContract () {
+  async initContract () {
     this.contracts = {
       erc721: TruffleContract(ERC721abi),
       tokenManager: TruffleContract(TokenManagerabi)
@@ -81,6 +81,21 @@ class Metadata {
 
     this.contracts.erc721.setProvider(this.web3.currentProvider)
     this.contracts.tokenManager.setProvider(this.web3.currentProvider)
+
+    const tokenInstance = await this.contracts.erc721.deployed()
+
+    const name = await tokenInstance.name()
+    const symbol = await tokenInstance.symbol()
+
+    this.tokenInfo = {
+      contractAddress: tokenInstance.address,
+      name: name,
+      symbol: symbol
+    }
+  }
+
+  getTokenInfo() {
+    return this.tokenInfo
   }
 
   getAccountId () {
@@ -106,13 +121,14 @@ class Metadata {
           window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
           // address to, uint256 tokenId, string memory cid, string memory baseUri
-          const instance = await this.contracts.tokenManager.deployed()
-          const minted = await instance.mint(
+          const managerInstance = await this.contracts.tokenManager.deployed()
+          
+          const minted = await managerInstance.mint(
             this.web3.eth.defaultAccount,
             1000,
             this.schema.cid,
             'http://localhost:8080/ipfs',
-            { from: this.web3.eth.defaultAccount }
+            { from: this.web3.eth.defaultAccount, message: 'test' }
           )
           return resolve(this)
         } catch (error) {
