@@ -17,3 +17,9 @@ services:
     - ./ganache4dev:/data
     ports:
     - "8545:8545"
+  frontend:
+    container_name: dapp-policy-editor
+    restart: always
+    image: plcgi1/dappipfspolicy_frontend
+    ports:
+    - "3000:80"

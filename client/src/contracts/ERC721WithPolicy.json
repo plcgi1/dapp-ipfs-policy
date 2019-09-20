@@ -6560,12 +6560,12 @@
         }
       },
       "links": {},
-      "address": "0x4a5cd58b24e3BF04360B06bFEaF45A39aA8035b6",
-      "transactionHash": "0x0becc1a615aa445311cf10e88e9b784da04e3de43aa9c728da91ee99c5ddc83f"
+      "address": "0x058f7CeFf4a998E5ce3CE7a8e913e32e9fA52601",
+      "transactionHash": "0x64c3c732fdcd32cc9fab3478779a10c22c5afa754ecab461222298d09f1bb8ad"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-20T09:59:50.386Z",
+  "updatedAt": "2019-09-20T11:20:17.772Z",
   "devdoc": {
     "author": "@plcgi1 inspired by Forest Fang (@saurfang)",
     "details": "Stores IPFS (multihash) hash by address. A multihash entry is in the format of <varint hash function code><varint digest size in bytes><hash function output> See https://github.com/multiformats/multihash * Currently IPFS hash is 34 bytes long with first two segments represented as a single byte (uint8) The digest is 32 bytes long and can be stored using bytes32 efficiently.",

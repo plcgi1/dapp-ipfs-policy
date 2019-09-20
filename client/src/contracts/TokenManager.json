@@ -1833,12 +1833,12 @@
         }
       },
       "links": {},
-      "address": "0xCB152A2Aa90055a0D255cA7dbaeb85eDFdc86096",
-      "transactionHash": "0x8634c33a77842e355353a891200adde0191a0cc29e4f72ea3808c6c4cd0daede"
+      "address": "0xD95B1DbEc167C6cf547d018dDEcF41a4cb2e2f73",
+      "transactionHash": "0xb6274923f7888cc7f8fe91c53f97187c6efac1454ffb8c3835c2e02cf2f8178e"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-20T09:59:50.392Z",
+  "updatedAt": "2019-09-20T11:20:17.778Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

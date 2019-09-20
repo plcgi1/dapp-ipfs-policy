@@ -53,6 +53,11 @@ Private Keys
 (8) 0x0f62d96d6675f32685bbdb8ac13cda7c23436f63efbb9d07700d8669ff12b7c4
 (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
 
-
+## Install
 docker-compose up
+docker exec -it ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+docker exec -it ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
+# kill docker compose
+docker-compose start
+
 truffle deploy --reset
