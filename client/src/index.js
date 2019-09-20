@@ -1,10 +1,8 @@
-import { render } from 'preact';
-import 'preact-material-components/style.css';
-import 'style/index.css';
-import App from './components/app';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './app';
 
-render(
+ReactDOM.render(
   <App/>,
-  document.body
+  document.getElementById('root')
 );
-// export default App;

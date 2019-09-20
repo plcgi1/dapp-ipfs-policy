@@ -1786,7 +1786,7 @@
     "version": "0.5.8+commit.23d335f2.Emscripten.clang"
   },
   "networks": {
-    "7778": {
+    "5777": {
       "events": {
         "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
           "anonymous": false,
@@ -1808,12 +1808,37 @@
         }
       },
       "links": {},
-      "address": "0xf491289b5DA695D7892B4960dcf48eB7e1ACb6B8",
-      "transactionHash": "0x43ba536399890a688ba7e7bd81bb67505ccce9fb44e49f1cd49e4157f80c0ff0"
+      "address": "0x39751a6973719312f2df44b8A91A692ef0649717",
+      "transactionHash": "0x4c12d131add6b8bdcee0a5c08e1af4fbd179f150c37f83b9442ac6905344292a"
+    },
+    "7777": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0xD95B1DbEc167C6cf547d018dDEcF41a4cb2e2f73",
+      "transactionHash": "0xb6274923f7888cc7f8fe91c53f97187c6efac1454ffb8c3835c2e02cf2f8178e"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-20T14:47:55.333Z",
+  "updatedAt": "2019-09-20T11:20:17.778Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

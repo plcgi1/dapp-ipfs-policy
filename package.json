@@ -4,6 +4,9 @@
   "description": "",
   "main": "truffle-config.js",
   "scripts": {
+    "deploy:ganache": "./node_modules/.bin/truffle deploy --network ganache --reset",
+    "start": "docker-compose start && ./node_modules/.bin/truffle migrate --network ganache --reset",
+    "stop": "docker-compose stop",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,7 +21,8 @@
   "homepage": "https://github.com/plcgi1/dapp-ipfs-policy#readme",
   "dependencies": {
     "@openzeppelin/contracts": "^2.3.0",
-    "bs58": "^4.0.1"
+    "bs58": "^4.0.1",
+    "truffle": "5.0.36"
   },
   "devDependencies": {
     "chai": "^4.2.0",

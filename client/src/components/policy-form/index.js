@@ -1,158 +1,145 @@
-import { Component } from 'preact';
-import TextField from 'preact-material-components/TextField'
-import LayoutGrid from 'preact-material-components/LayoutGrid'
-import Button from 'preact-material-components/Button';
-import Select from 'preact-material-components/Select';
+import React from 'react';
+import PropTypes from 'prop-types'
+import Card from 'antd/lib/card';
+import Form from 'antd/lib/form'
+import Input from 'antd/lib/input'
+import Button from 'antd/lib/button'
+import Select from 'antd/lib/select'
 import { status } from '../../helpers/enums'
 
-export default class PolicyForm extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      form: {},
-      errors: {}
-    }
-    this.validate = this.validate.bind(this)
-    this.onInput = this.onInput.bind(this)
-    this.onSave = this.onSave.bind(this)
-    this.onPublish = this.onPublish.bind(this)
-  }
-  
-  validate (name, value) {
-    const { form, errors } = this.state
-    if (name) {
-      if (!value) {
-        errors[name] = 'Required field'
-      } else {
-        delete errors[name]
-      }
-      return Object.values(errors).length > 0 ? errors : false
-    }
-    const fieldNames = Object.keys(this.props.model.properties)
-    fieldNames.forEach((fieldName) => {
-      if (!form[fieldName]) {
-        errors[fieldName] = 'Required field'
-      } else {
-        delete errors[fieldName]
-      }
-    })
-
-    return Object.values(errors).length > 0 ? errors : false
+class PolicyForm extends React.Component {
+  componentDidMount () {
+    console.info('Implement me.PolicyForm.componentDidMount')
   }
 
-  onInput (e) {
-    const { value, name } = e.target;
-    const { state } = this
+  onPublish (e) {
+    const { setFieldsValue } = this.props.form
 
-    state.form[name] = value
+    setFieldsValue({ status: status.published.id })
 
-    const errors = this.validate(value, name)
-
-    if (errors) {
-      state.errors = errors
-    }
-    this.setState(state)
+    this.props.onSubmit(this.props.form)()
   }
 
-  onSave (e) {
-    e.preventDefault()
-    const errors = this.validate()
-
-    if (errors) {
-      this.setState({ errors })
-      console.warn('ERRORS', errors)
-      return null
-    }
-
-    this.props.onsave(this.state.form)
-  }
-
-  onPublish(e) {
-    e.preventDefault()
-
-    const { form } = this.state
-
-    const errors = this.validate()
-
-    delete errors[status]
-
-    if (errors) {
-      this.setState({ errors })
-      console.warn('ERRORS', errors)
-      return null
-    }
-    form.status = status.published.id
-
-    this.props.onsave(form)
-
-    this.setState({ form })
-  }
-
-  getFieldComponent (name, valid, disabled, form) {
+  getFieldComponent (property, disabled) {
     const { model } = this.props
+    const schema = model.schema
+    const { getFieldDecorator } = this.props.form;
 
-    if (model.properties[name].fieldType === 'text') {
-      return <TextField
-        name={name}
-        required
-        fullwidth
-        effect="lineOutwards"
-        label={name}
-        disabled={disabled}
-        value={form[name]}
-        onChange={this.onInput}
-        valid={valid}
-        helperText={model.properties[name].description}
-        helperTextPersistent
-      />
-    } else if (model.properties[name].fieldType === 'select') {
+    if (schema.properties[property].fieldType === 'text') {
+      return <Form.Item label={property} key={property}>
+        {
+          getFieldDecorator(property, {
+            rules: [
+              { required: true }
+            ],
+            initialValue: schema.properties[property].value
+          })(
+            <Input
+              name={property}
+              disabled={schema.properties.status.value === status.published.id || disabled}
+              placeholder={schema.properties[property].description}
+            />
+          )
+        }
+      </Form.Item>
+    } else if (schema.properties[property].fieldType === 'select') {
       const statuses = Object
         .keys(status)
         .filter(k => k !== status.published.id)
         .map(s => {
           return status[s]
         })
-
-      return <Select
-        name={name}
-        hintText="Select a status"
-        selectedIndex={0}
-        style={{ minWidth: '100%' }}
-        onChange={this.onInput}
-        valid={valid}
-        box>
+      if (schema.properties.status.value === status.published.id) {
+        disabled = true
+      }
+      return <Form.Item label={property} key={property}>
         {
-          statuses.map(status => {
-            const selected = status.id === model.properties[name].id
+          getFieldDecorator(property, {
+            rules: [
+              { required: true }
+            ],
+            initialValue: schema.properties[property].value
+          })(
+            <Select
+              name={property}
+              hintText="Select a status"
+              disabled={disabled}
+              defaultValue={status.draft.id}
+              style={{minWidth: '100%'}}
+              box>
+              {
+                statuses.map(status => {
+                  const selected = status.id === schema.properties[property].id
 
-            return <Select.Item selected={selected} value={status.id}>{status.label}</Select.Item>
-          })
+                  return <Select.Option key={status.id} selected={selected}
+                    value={status.id}>{status.label}</Select.Option>
+                })
+              }
+            </Select>
+          )
         }
-      </Select>;
+      </Form.Item>
     }
   }
-  render() {
-    const { model, disabled } = this.props
-    const { form, errors } = this.state
 
-    return (
-      <LayoutGrid align='middle' cols={1}>
-        <LayoutGrid.Inner>
-          <LayoutGrid.Cell cols="3"></LayoutGrid.Cell>
-          <LayoutGrid.Cell cols="6">
-           <form>
-            {
-              Object.keys(model.properties).map((property) => {
-                const valid = errors[property] ? false : true
-                return this.getFieldComponent(property, valid, disabled, form)
-              })
-            }
-             <Button onClick={this.onSave} disabled={disabled}>Save</Button>
-             <Button onClick={this.onPublish} disabled={disabled}>Publish</Button>
-          </form>
-          </LayoutGrid.Cell>
-        </LayoutGrid.Inner>
-      </LayoutGrid>
-    );
+  render () {
+    const { model, disabled, form, onSubmit } = this.props
+    const { schema } = model
+
+    return <Card style={{width: '60%', margin: '0 auto'}}>
+      <Form layout='vertical' onSubmit={onSubmit(form)}>
+        {
+          Object.keys(model.schema.properties).map((property) => {
+            const component = this.getFieldComponent(property, disabled)
+
+            return component
+          })
+        }
+        <Form.Item
+          wrapperCol={{
+            xs: { span: 24, offset: 0 },
+            sm: { span: 16, offset: 8 },
+          }}
+        >
+          <Button
+            disabled={schema.properties.status.value === status.published.id || disabled}
+            htmlType="submit"
+            size='large'
+            style={{ width: 120 }}
+            type='primary'>
+            Save
+          </Button>
+
+          {
+            (schema.properties.status.value === status.approved.id
+              || schema.properties.status.value === status.published.id)
+             ? <Button
+                disabled={disabled}
+                size='large'
+                onClick={this.onPublish.bind(this)}
+                style={{ width: 120 }}>
+                Mint
+              </Button>
+             : null
+          }
+          
+        </Form.Item>
+      </Form>
+    </Card>
   }
 }
+
+PolicyForm.propTypes = {
+  model: PropTypes.object,
+  onSubmit: PropTypes.func
+}
+
+const WrappedForm = Form.create()(PolicyForm);
+
+class FormComponent extends React.Component {
+  render () {
+    return <WrappedForm {...this.props}/>;
+  }
+}
+
+export default FormComponent;

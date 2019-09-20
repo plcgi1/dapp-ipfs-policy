@@ -55,9 +55,17 @@ Private Keys
 
 ## Install
 docker-compose up
-docker exec -it ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
-docker exec -it ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
-# kill docker compose
+
+docker exec -it ipfs-host sh
+sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
+
+# kill docker compose - ctrl-c
 docker-compose start
 
-truffle deploy --reset
+# run docker-compose and deploy contracts
+npm run start
+
+http://localhost:3000
+
+npm run stop
