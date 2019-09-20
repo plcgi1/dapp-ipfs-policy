@@ -36,7 +36,7 @@ class PolicyForm extends React.Component {
           })(
             <Input
               name={property}
-              disabled={schema.properties.status === status.published.id || disabled}
+              disabled={schema.properties.status.value === status.published.id || disabled}
               placeholder={schema.properties[property].description}
             />
           )
@@ -49,7 +49,9 @@ class PolicyForm extends React.Component {
         .map(s => {
           return status[s]
         })
-
+      if (schema.properties.status.value === status.published.id) {
+        disabled = true
+      }
       return <Form.Item label={property} key={property}>
         {
           getFieldDecorator(property, {
@@ -61,7 +63,7 @@ class PolicyForm extends React.Component {
             <Select
               name={property}
               hintText="Select a status"
-              disabled={schema.properties.status === status.published.id || disabled}
+              disabled={disabled}
               defaultValue={status.draft.id}
               style={{minWidth: '100%'}}
               box>
@@ -84,7 +86,7 @@ class PolicyForm extends React.Component {
     const { model, disabled, form, onSubmit } = this.props
     const { schema } = model
 
-    return <Card style={{width: 600, margin: '0 auto'}}>
+    return <Card style={{width: '60%', margin: '0 auto'}}>
       <Form layout='vertical' onSubmit={onSubmit(form)}>
         {
           Object.keys(model.schema.properties).map((property) => {

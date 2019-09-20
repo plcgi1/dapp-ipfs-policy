@@ -107,6 +107,7 @@ class Metadata {
   }
 
   async save (values) {
+    console.info('values.status', values.status)
     Object.keys(values).forEach(key => {
       this.schema.properties[key].value = values[key]
     })

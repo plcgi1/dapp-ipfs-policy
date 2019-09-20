@@ -4,9 +4,10 @@ import notification from 'antd/lib/notification'
 import ContractView from './components/contract-view'
 import PolicyForm from './components/policy-form'
 import MetadataModel from './models/metadata'
+import { status } from './helpers/enums'
 import "antd/dist/antd.css";
 
-const { Header, Content } = Layout;
+const { Content, Sider } = Layout;
 
 class App extends React.Component {
   state = {
@@ -32,8 +33,6 @@ class App extends React.Component {
     const account = model.getAccountId()
 
     this.setState({ model, account })
-
-    console.info('TODO. App.componentDidMount. create ContractInfo props for components')
   }
   
   onSubmit (form) {
@@ -50,7 +49,10 @@ class App extends React.Component {
         }
         this.setState({ fetching: true })
 
-        model.save(values)
+        if (!values.status && model.schema.properties.status.value === status.approved.id) {
+          values.status = status.approved.id
+        }
+        model.save({ ...values })
           .then((response) => {
             this.setState({ model: response, fetching: false})
 
@@ -75,9 +77,9 @@ class App extends React.Component {
     return model
         ? <div className='public'>
         <Layout>
-          <Header style={{ background: 'white' }}>
+          <Sider theme='light' width={'20%'}>
             <ContractView model={model} account={account}/>
-          </Header>
+          </Sider>
           <Content>
             <PolicyForm
               model={model}
