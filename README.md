@@ -54,18 +54,21 @@ Private Keys
 (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
 
 ## Install
+npm install
+cd client && npm install
+
 docker-compose up
 
 docker exec -it ipfs-host sh
 sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
 sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
 
-# kill docker compose - ctrl-c
-docker-compose start
+# kill docker-compose - ctrl-c
 
-# run docker-compose and deploy contracts
+# run docker-compose, deploy contracts and run react-dev-server
 npm run start
 
 http://localhost:3000
 
+# stop ipfs and ganache docker containers
 npm run stop

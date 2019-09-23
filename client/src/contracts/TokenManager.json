@@ -1810,10 +1810,60 @@
       "links": {},
       "address": "0xf491289b5DA695D7892B4960dcf48eB7e1ACb6B8",
       "transactionHash": "0x43ba536399890a688ba7e7bd81bb67505ccce9fb44e49f1cd49e4157f80c0ff0"
+    },
+    "1569224663005": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x4B31c27826C810007749860be339ECC28f56fb1b",
+      "transactionHash": "0x3a321aa50bb149bd24888bbfd729a14924e63eb63ef2b842869a1423d04c47c8"
+    },
+    "1569228115883": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0xddF190259815AfDF723748112E6a9532C1f06809",
+      "transactionHash": "0x9a7f15b4a6ec7381d2a92345eb624a72bf6dc3aaba21bd6e808ca18555446bfe"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-20T14:47:55.333Z",
+  "updatedAt": "2019-09-23T08:41:57.896Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
