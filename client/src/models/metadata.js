@@ -83,12 +83,17 @@ class Metadata {
     this.contracts.tokenManager.setProvider(this.web3.currentProvider)
 
     const tokenInstance = await this.contracts.erc721.deployed()
+    const managerInstance = await this.contracts.tokenManager.deployed()
 
     const name = await tokenInstance.name()
     const symbol = await tokenInstance.symbol()
 
+    const balanceOf = await tokenInstance.balanceOf(this.web3.eth.defaultAccount)
+
+    this.balanceOf = balanceOf.toNumber()
     this.tokenInfo = {
       contractAddress: tokenInstance.address,
+      tokenManagerAddress: managerInstance.address,
       name: name,
       symbol: symbol
     }
@@ -123,7 +128,7 @@ class Metadata {
 
           // address to, uint256 tokenId, string memory cid, string memory baseUri
           const managerInstance = await this.contracts.tokenManager.deployed()
-          
+
           const minted = await managerInstance.mint(
             this.web3.eth.defaultAccount,
             1000,
