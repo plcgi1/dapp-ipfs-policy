@@ -69,8 +69,7 @@ class PolicyForm extends React.Component {
           getFieldDecorator(property, {
             rules: [
               { required: true }
-            ],
-            initialValue: schema.properties[property].value
+            ]
           })(
             <Select
               name={property}
@@ -83,8 +82,13 @@ class PolicyForm extends React.Component {
                 statuses.map(status => {
                   const selected = status.id === schema.properties[property].id
 
-                  return <Select.Option disabled={status.disabled} key={status.id} selected={selected}
-                    value={status.id}>{status.label}</Select.Option>
+                  return <Select.Option
+                    disabled={status.disabled}
+                    key={status.id}
+                    selected={selected}
+                    value={status.id}>
+                    {status.label}
+                  </Select.Option>
                 })
               }
             </Select>

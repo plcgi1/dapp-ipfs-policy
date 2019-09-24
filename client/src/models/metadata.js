@@ -26,20 +26,20 @@ const schema = {
       "fieldType": "text",
       "description": "Describes the carrier which takes the primary risk",
     },
-    "risk": {
-      "type": "string",
-      "fieldType": "text",
-      "description": "Describes the risk",
+    risk: {
+      type: "string",
+      fieldType: "text",
+      description: "Describes the risk",
     },
-    "parameters": {
-      "type": "string",
-      "fieldType": "text",
-      "description": "Describes further parameters characterizing the risk",
+    parameters: {
+      type: "string",
+      fieldType: "text",
+      description: "Describes further parameters characterizing the risk",
     },
-    "status": {
-      "type": "string",
-      "fieldType": "select",
-      "description": "Defines the status of the policy, e.g. Applied, Underwritten, Claimed, Paid out, etc."
+    status: {
+      type: "string",
+      fieldType: "select",
+      description: "Defines the status of the policy, e.g. Applied, Underwritten, Claimed, Paid out, etc."
     }
   }
 }
@@ -126,47 +126,139 @@ class Metadata {
     this.schema = newSchema
   }
 
+  _convertToEip712 () {
+    /*
+ https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md
+ https://github.com/ethereum/EIPs/blob/master/assets/eip-712/Example.js
+
+{
+  types: {
+    EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' },
+        { name: 'verifyingContract', type: 'address' },
+    ],
+    Person: [
+        { name: 'name', type: 'string' },
+        { name: 'wallet', type: 'address' }
+    ],
+    Mail: [
+        { name: 'from', type: 'Person' },
+        { name: 'to', type: 'Person' },
+        { name: 'contents', type: 'string' }
+    ],
+  },
+  primaryType: 'Mail',
+  domain: {
+      name: 'Ether Mail',
+      version: '1',
+      chainId: 1,
+      verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  },
+  message: {
+      from: {
+          name: 'Cow',
+          wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+      },
+      to: {
+          name: 'Bob',
+          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+      },
+      contents: 'Hello, Bob!',
+  },
+}
+    * */
+    // TODO refactor to module
+    const { tokenManagerAddress } = this.tokenInfo
+    const { schema } = this
+
+    const _schemaToMetadata = (schema) => {
+      const result = Object.keys(schema.properties)
+        .map(property => {
+          return { name: property, type: schema.properties[property].type }
+        })
+
+      return result
+    }
+
+    const _valuesToObject = (schema) => {
+      const result = {}
+      Object.keys(schema.properties)
+        .forEach(property => {
+          result[property] = schema.properties[property].value
+        })
+      return result
+    }
+
+    return {
+      types: {
+        EIP712Domain: [
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
+        ],
+        Metadata: _schemaToMetadata(schema)
+      },
+      primaryType: 'Metadata',
+      domain: {
+        name: schema.title,
+        version: '1',
+        chainId: 1,
+        verifyingContract: tokenManagerAddress
+      },
+      message: _valuesToObject(schema)
+    }
+  }
+
   async save (values) {
     Object.keys(values).forEach(key => {
       this.schema.properties[key].value = values[key]
     })
-    return new Promise(async ( resolve, reject) => {
+    try {
       if (values.status === status.published.id) {
-        // save to ipfs
         const content = Buffer.from(JSON.stringify(this.schema))
-        try {
-          const results = await this.ipfs.add(content)
-          this.schema.cid = results[0].hash // "Qm...WW"
+        const results = await this.ipfs.add(content)
+        this.schema.cid = results[0].hash // "Qm...WW"
 
-          window.localStorage.setItem('metadata', JSON.stringify(this.schema));
+        window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
-          // address to, uint256 tokenId, string memory cid, string memory baseUri
-          const managerInstance = await this.contracts.tokenManager.deployed()
+        // address to, uint256 tokenId, string memory cid, string memory baseUri
+        const managerInstance = await this.contracts.tokenManager.deployed()
 
-          const minted = await managerInstance.mint(
-            this.web3.eth.defaultAccount,
-            // TODO make me configurable from form fields
-            1000,
-            this.schema.cid,
-            // TODO make me configurable from form fields
-            contractBaseUrl,
-            { from: this.web3.eth.defaultAccount, message: 'test' }
-          )
-          return resolve(this)
-        } catch (error) {
-          // reset schema status
-          // this.schema.properties.status.value = status.draft.id
-          //
-          // window.localStorage.setItem('metadata', JSON.stringify(this.schema));
+        // TODO we can send it with this.web3.eth.signTypedData
+        const convertedData = this._convertToEip712()
 
-          return reject(error)
-        }
+        console.info('convertedData', convertedData)
+
+        const signedData = await this.web3.currentProvider.sendAsync({
+          method: 'eth_signTypedData',
+          params: [JSON.stringify(convertedData), this.web3.eth.defaultAccount],
+          from: this.web3.eth.defaultAccount
+        })
+
+        await managerInstance.mint(
+          this.web3.eth.defaultAccount,
+          // TODO make me configurable from form fields
+          1000,
+          this.schema.cid,
+          // TODO make me configurable from form fields
+          contractBaseUrl,
+          {
+            from: this.web3.eth.defaultAccount,
+            data: signedData
+          }
+        )
+
+        return this
       }
-
       window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
-      return resolve(this);
-    })
+      return this
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 
   get () {
