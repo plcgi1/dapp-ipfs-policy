@@ -8,11 +8,7 @@ import Select from 'antd/lib/select'
 import { status } from '../../helpers/enums'
 
 class PolicyForm extends React.Component {
-  componentDidMount () {
-    console.info('Implement me.PolicyForm.componentDidMount')
-  }
-
-  onPublish (e) {
+  onPublish () {
     const { setFieldsValue } = this.props.form
 
     setFieldsValue({ status: status.published.id })
@@ -26,6 +22,9 @@ class PolicyForm extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     if (schema.properties[property].fieldType === 'text') {
+      const re = new RegExp(`${status.approved.id}|${status.published.id}`,"g");
+      const disabledByStatus = re.test(schema.properties[property].value)
+
       return <Form.Item label={property} key={property}>
         {
           getFieldDecorator(property, {
@@ -36,19 +35,32 @@ class PolicyForm extends React.Component {
           })(
             <Input
               name={property}
-              disabled={schema.properties.status.value === status.published.id || disabled}
+              disabled={disabledByStatus || disabled}
               placeholder={schema.properties[property].description}
             />
           )
         }
       </Form.Item>
     } else if (schema.properties[property].fieldType === 'select') {
-      const statuses = Object
-        .keys(status)
-        .filter(k => k !== status.published.id)
-        .map(s => {
-          return status[s]
-        })
+      let statuses = []
+      if(property === 'status') {
+        if(!schema.properties[property].value) {
+          statuses.push({ ...status.draft })
+          statuses.push({ ...status.approved, disabled: true })
+        }
+        if (schema.properties[property].value === status.draft.id) {
+          statuses.push({ ...status.draft, disabled: true })
+          statuses.push({ ...status.approved })
+        }
+        if (schema.properties[property].value === status.approved.id) {
+          statuses.push({ ...status.draft, disabled: true })
+          statuses.push({ ...status.approved, disabled: true })
+        }
+        if(schema.properties[property].value === status.published.id) {
+          statuses.push({ ...status.published })
+        }
+      }
+
       if (schema.properties.status.value === status.published.id) {
         disabled = true
       }
@@ -71,7 +83,7 @@ class PolicyForm extends React.Component {
                 statuses.map(status => {
                   const selected = status.id === schema.properties[property].id
 
-                  return <Select.Option key={status.id} selected={selected}
+                  return <Select.Option disabled={status.disabled} key={status.id} selected={selected}
                     value={status.id}>{status.label}</Select.Option>
                 })
               }
@@ -85,8 +97,7 @@ class PolicyForm extends React.Component {
   render () {
     const { model, disabled, form, onSubmit } = this.props
     const { schema } = model
-    const showMinter = (schema.properties.status.value === status.approved.id
-      || schema.properties.status.value === status.published.id)
+    const showMinter = true //(schema.properties.status.value === status.approved.id)
 
     return <Card style={{width: '60%', margin: '0 auto'}}>
       <Form layout='vertical' onSubmit={onSubmit(form)}>
@@ -104,7 +115,7 @@ class PolicyForm extends React.Component {
           }}
         >
           <Button
-            disabled={schema.properties.status.value === status.published.id || disabled}
+            disabled={schema.properties.status.value === status.approved.id || disabled}
             htmlType="submit"
             size='large'
             style={{ width: 120 }}
@@ -114,7 +125,6 @@ class PolicyForm extends React.Component {
           {
             showMinter
               ? <Button
-                disabled={disabled}
                 size='large'
                 onClick={this.onPublish.bind(this)}
                 style={{ width: 120 }}>

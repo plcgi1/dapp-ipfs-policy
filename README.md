@@ -54,21 +54,21 @@ Private Keys
 (9) 0x8d5366123cb560bb606379f90a0bfd4769eecc0557f1b362dcae9012b548b1e5
 
 ## Install
-npm install
-cd client && npm install
 
-docker-compose up
+1. ```npm install && cd client && npm install```
 
-docker exec -it ipfs-host sh
-sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
-sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
+2. ```docker-compose up --build```
 
-//# kill docker-compose - ctrl-c
+3. Set CORS headers for ipfs server (once) 
+``` 
+# in other terminal console
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
 
-//# run docker-compose, deploy contracts and run react-dev-server
-npm run start
+```
+4. kill docker-compose with ctrl-c
 
-http://localhost:3000
-
-//# stop ipfs and ganache docker containers
-npm run stop:containers
+5. Run docker-compose, migrate contract to ganache network, start react-dev-server for ui
+```npm start```
+In browser tab - if need - type
+```http://localhost:3000```

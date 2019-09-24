@@ -4094,12 +4094,12 @@
         }
       },
       "links": {},
-      "address": "0x66FB68D61eD680a7D91914F179FF2515bc77D7Ad",
-      "transactionHash": "0x080a741fe55fa9ba37dde237311ef19617ec4c8711b599af8441d595d3a96f96"
+      "address": "0xe412Be7331B3452577c63569638354fe886FE405",
+      "transactionHash": "0xfb56ea5f804d10176437be79216db14a41ac00bcb3aefff84492395474673219"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-24T08:56:46.109Z",
+  "updatedAt": "2019-09-24T12:02:07.239Z",
   "devdoc": {
     "methods": {
       "approve(address,uint256)": {

@@ -25,7 +25,11 @@ class App extends React.Component {
       await model.initWeb3()
   
       await model.initContract()
-  
+
+      model.subscribeToMetamaskUpdates((account) => {
+        this.setState({ account })
+      })
+
       const form = model.get()
   
       if (form) {
@@ -103,7 +107,7 @@ class App extends React.Component {
           <Content>
             <PolicyForm
               model={model}
-              fetching={fetching}
+              disabled={fetching || cid}
               onSubmit={this.onSubmit.bind(this)}/>
           </Content>
         </Layout>

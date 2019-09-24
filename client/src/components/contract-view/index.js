@@ -17,7 +17,7 @@ class ContractView extends React.Component {
       <List
         itemLayout="horizontal"
       >
-        <List.Item>et
+        <List.Item>
           <List.Item.Meta
             title='Current account'
             description={<Popover content={account}>{shortAddr}</Popover>}

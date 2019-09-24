@@ -65,14 +65,23 @@ class Metadata {
           if (!accounts[0]) {
             return Promise.reject('Empty account.Check metamask')
           }
+
           web3.eth.defaultAccount = accounts[0];
           console.log('getWeb3.Using account:', web3.eth.defaultAccount);
+
           this.web3 = web3
         });
       })
       .catch((error) => {
         throw new Error(error)
       })
+  }
+
+  subscribeToMetamaskUpdates (callback) {
+    this.web3.currentProvider.publicConfigStore.on('update', (ev) => {
+      this.web3.eth.defaultAccount = ev.selectedAddress
+      callback(ev.selectedAddress)
+    });
   }
 
   async initContract () {
@@ -118,7 +127,6 @@ class Metadata {
   }
 
   async save (values) {
-    console.info('values.status', values.status)
     Object.keys(values).forEach(key => {
       this.schema.properties[key].value = values[key]
     })
@@ -147,9 +155,9 @@ class Metadata {
           return resolve(this)
         } catch (error) {
           // reset schema status
-          this.schema.properties.status.value = status.draft.id
-
-          window.localStorage.setItem('metadata', JSON.stringify(this.schema));
+          // this.schema.properties.status.value = status.draft.id
+          //
+          // window.localStorage.setItem('metadata', JSON.stringify(this.schema));
 
           return reject(error)
         }
