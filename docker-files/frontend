@@ -3,22 +3,22 @@ FROM tiangolo/node-frontend:10 as build-stage
 
 WORKDIR /app
 
-COPY package*.json /app/
+RUN mkdir client
 
-RUN npm install
+COPY client/src/ client
+COPY client/public/ client
+COPY client/src/contracts/ client
+COPY client/package.json client
+COPY client/config-overrides.js client
 
-COPY ./ /app/
-
-RUN npm run build
+RUN cd client && npm install
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1.15
 
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
+COPY --from=build-stage /app/client/build/ /usr/share/nginx/html
 
 # Copy the default nginx.conf provided by tiangolo/node-frontend
-COPY --from=build-stage /nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build-stage /app/client/nginx.conf /etc/nginx/conf.d/default.conf
 
-FROM node
-COPY . /home/node/MetaCoin
-RUN npm install -g truffle
+COPY client/build /usr/share/nginx/html

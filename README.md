@@ -71,4 +71,4 @@ npm run start
 http://localhost:3000
 
 # stop ipfs and ganache docker containers
-npm run stop
+npm run stop:containers

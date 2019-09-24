@@ -6,7 +6,7 @@
   "scripts": {
     "deploy:ganache": "./node_modules/.bin/truffle migrate --network ganache --reset",
     "start": "docker-compose start && ./node_modules/.bin/truffle migrate --network ganache --reset && cd client;npm start",
-    "stop": "docker-compose stop",
+    "stop:containers": "docker-compose stop",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +22,9 @@
   "dependencies": {
     "@openzeppelin/contracts": "^2.3.0",
     "bs58": "^4.0.1",
-    "truffle": "5.0.36"
+    "command-line-args": "^5.1.1",
+    "truffle": "5.0.36",
+    "web3": "^1.2.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
