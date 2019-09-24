@@ -85,6 +85,8 @@ class PolicyForm extends React.Component {
   render () {
     const { model, disabled, form, onSubmit } = this.props
     const { schema } = model
+    const showMinter = (schema.properties.status.value === status.approved.id
+      || schema.properties.status.value === status.published.id)
 
     return <Card style={{width: '60%', margin: '0 auto'}}>
       <Form layout='vertical' onSubmit={onSubmit(form)}>
@@ -109,21 +111,19 @@ class PolicyForm extends React.Component {
             type='primary'>
             Save
           </Button>
-
           {
-            (schema.properties.status.value === status.approved.id
-              || schema.properties.status.value === status.published.id)
-             ? <Button
+            showMinter
+              ? <Button
                 disabled={disabled}
                 size='large'
                 onClick={this.onPublish.bind(this)}
                 style={{ width: 120 }}>
                 Mint
               </Button>
-             : null
+              : null
           }
-          
         </Form.Item>
+
       </Form>
     </Card>
   }

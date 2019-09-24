@@ -12,3 +12,5 @@ export const status = {
     label: 'Published'
   }
 }
+
+export const contractBaseUrl = 'http://localhost:8080/ipfs'

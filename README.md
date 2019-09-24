@@ -63,12 +63,12 @@ docker exec -it ipfs-host sh
 sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
 sh# ipfs-host ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
 
-# kill docker-compose - ctrl-c
+//# kill docker-compose - ctrl-c
 
-# run docker-compose, deploy contracts and run react-dev-server
+//# run docker-compose, deploy contracts and run react-dev-server
 npm run start
 
 http://localhost:3000
 
-# stop ipfs and ganache docker containers
+//# stop ipfs and ganache docker containers
 npm run stop:containers

@@ -2,24 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import Popover from 'antd/lib/popover';
 import List from 'antd/lib/list'
+import { contractBaseUrl } from '../../helpers/enums'
 import stringShort from '../../helpers/string'
 
 class ContractView extends React.Component {
   render () {
-    const { model, account } = this.props
+    const { cid, account, contractAddress, tokenManagerAddress, name, symbol, balanceOf } = this.props
 
     const shortAddr = account ? stringShort(account) : 'Not set yet'
-    const shortCid = model.schema.cid ? stringShort(model.schema.cid) : 'Not set yet'
-    const tokenInfo = model.getTokenInfo()
-    const shortenedContractAddress = tokenInfo.contractAddress ? stringShort(tokenInfo.contractAddress) : 'Not set yet'
-    const name = tokenInfo.name ? tokenInfo.name : 'Not set yet'
-    const symbol = tokenInfo.symbol ? tokenInfo.symbol : 'Not set yet'
-
+    const shortCid = cid ? stringShort(cid) : 'Not set yet'
+    const shortenedContractAddress = contractAddress ? stringShort(contractAddress) : 'Not set yet'
+    const shortenedTokenManagerAddress = tokenManagerAddress ? stringShort(tokenManagerAddress) : 'Not set y'
     return <div style={{ margin: 20 }}>
       <List
         itemLayout="horizontal"
       >
-        <List.Item>
+        <List.Item>et
           <List.Item.Meta
             title='Current account'
             description={<Popover content={account}>{shortAddr}</Popover>}
@@ -29,17 +27,24 @@ class ContractView extends React.Component {
         <List.Item>
           <List.Item.Meta
             title='policy CID'
-            description={<Popover content={model.schema.cid}>{shortCid}</Popover>}
+            description={<Popover content={<a target="blank" href={`${contractBaseUrl}/${cid}`}>{cid}</a>}>{shortCid}</Popover>}
           />
         </List.Item>
 
         <List.Item>
           <List.Item.Meta
             title='Token contract address'
-            description={<Popover content={tokenInfo.contractAddress}>{shortenedContractAddress}</Popover>}
+            description={<Popover content={contractAddress}>{shortenedContractAddress}</Popover>}
           />
         </List.Item>
-
+  
+        <List.Item>
+          <List.Item.Meta
+            title='Token manager contract address'
+            description={<Popover content={tokenManagerAddress}>{shortenedTokenManagerAddress}</Popover>}
+          />
+        </List.Item>
+        
         <List.Item>
           <List.Item.Meta
             title='Token name'
@@ -51,6 +56,13 @@ class ContractView extends React.Component {
           <List.Item.Meta
             title='Token symbol'
             description={symbol}
+          />
+        </List.Item>
+  
+        <List.Item>
+          <List.Item.Meta
+            title='Balance'
+            description={balanceOf}
           />
         </List.Item>
       </List>

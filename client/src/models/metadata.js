@@ -1,7 +1,7 @@
 import IpfsHttpClient from 'ipfs-http-client'
 import { Buffer } from 'buffer/'
 import TruffleContract from '@truffle/contract'
-import { status } from '../helpers/enums'
+import { status, contractBaseUrl } from '../helpers/enums'
 import { getWeb3 } from '../helpers/getWeb3'
 import ERC721abi from '../contracts/ERC721MetadataMintable.json'
 import TokenManagerabi from '../contracts/TokenManager.json'
@@ -62,7 +62,9 @@ class Metadata {
           if (err) {
             throw new Error(err);
           }
-
+          if (!accounts[0]) {
+            return Promise.reject('Empty account.Check metamask')
+          }
           web3.eth.defaultAccount = accounts[0];
           console.log('getWeb3.Using account:', web3.eth.defaultAccount);
           this.web3 = web3
@@ -79,16 +81,25 @@ class Metadata {
       tokenManager: TruffleContract(TokenManagerabi)
     };
 
+    if (!this.web3) {
+      throw new Error('Empty contracts')
+    }
     this.contracts.erc721.setProvider(this.web3.currentProvider)
     this.contracts.tokenManager.setProvider(this.web3.currentProvider)
 
     const tokenInstance = await this.contracts.erc721.deployed()
 
+    const managerInstance = await this.contracts.tokenManager.deployed()
+
     const name = await tokenInstance.name()
     const symbol = await tokenInstance.symbol()
 
+    const balanceOf = await tokenInstance.balanceOf(this.web3.eth.defaultAccount)
+
+    this.balanceOf = balanceOf.toNumber()
     this.tokenInfo = {
       contractAddress: tokenInstance.address,
+      tokenManagerAddress: managerInstance.address,
       name: name,
       symbol: symbol
     }
@@ -123,12 +134,14 @@ class Metadata {
 
           // address to, uint256 tokenId, string memory cid, string memory baseUri
           const managerInstance = await this.contracts.tokenManager.deployed()
-          
+
           const minted = await managerInstance.mint(
             this.web3.eth.defaultAccount,
+            // TODO make me configurable from form fields
             1000,
             this.schema.cid,
-            'http://localhost:8080/ipfs',
+            // TODO make me configurable from form fields
+            contractBaseUrl,
             { from: this.web3.eth.defaultAccount, message: 'test' }
           )
           return resolve(this)

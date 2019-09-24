@@ -19,20 +19,27 @@ class App extends React.Component {
   async componentDidMount () {
     const model = new MetadataModel()
     
-    model.initIpfs()
-
-    await model.initWeb3()
-
-    await model.initContract()
-
-    const form = model.get()
-
-    if (form) {
-      model.setSchema(form)
+    try {
+      model.initIpfs()
+  
+      await model.initWeb3()
+  
+      await model.initContract()
+  
+      const form = model.get()
+  
+      if (form) {
+        model.setSchema(form)
+      }
+      const account = model.getAccountId()
+  
+      this.setState({model, account})
+    } catch (error) {
+      console.error('App.componentDidMount', error)
+      return notification.error({
+        message: error.message
+      })
     }
-    const account = model.getAccountId()
-
-    this.setState({ model, account })
   }
   
   onSubmit (form) {
@@ -73,12 +80,25 @@ class App extends React.Component {
   
   render () {
     const { model, fetching, account } = this.state
+    
+    if (!model) {
+      return <div>Initializing</div>
+    }
+    
+    const tokenInfo = model.getTokenInfo()
+    const cid = model.schema.cid
 
-    return model
-        ? <div className='public'>
+    return <div className='public'>
         <Layout>
           <Sider theme='light' width={'20%'}>
-            <ContractView model={model} account={account}/>
+            <ContractView
+              tokenManagerAddress={tokenInfo.tokenManagerAddress}
+              contractAddress={tokenInfo.contractAddress}
+              name={tokenInfo.name}
+              symbol={tokenInfo.symbol}
+              cid={cid}
+              balanceOf={model.balanceOf}
+              account={account}/>
           </Sider>
           <Content>
             <PolicyForm
@@ -88,7 +108,6 @@ class App extends React.Component {
           </Content>
         </Layout>
       </div>
-      : <div>Initializing</div>
   }
 }
 
