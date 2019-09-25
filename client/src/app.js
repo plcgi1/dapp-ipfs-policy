@@ -5,6 +5,7 @@ import ContractView from './components/contract-view'
 import PolicyForm from './components/policy-form'
 import MetadataModel from './models/metadata'
 import { status } from './helpers/enums'
+import { random } from './helpers/math'
 import "antd/dist/antd.css";
 
 const { Content, Sider } = Layout;
@@ -63,7 +64,7 @@ class App extends React.Component {
         if (!values.status && model.schema.properties.status.value === status.approved.id) {
           values.status = status.approved.id
         }
-        model.save({ ...values })
+        model.save({ ...values }, random(6))
           .then((response) => {
             this.setState({ model: response, fetching: false})
 

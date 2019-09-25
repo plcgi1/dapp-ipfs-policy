@@ -106,11 +106,14 @@ class Metadata {
     const balanceOf = await tokenInstance.balanceOf(this.web3.eth.defaultAccount)
 
     this.balanceOf = balanceOf.toNumber()
+    const chainId = await this.web3.eth.net.getId()
+
     this.tokenInfo = {
       contractAddress: tokenInstance.address,
       tokenManagerAddress: managerInstance.address,
       name: name,
-      symbol: symbol
+      symbol: symbol,
+      chainId
     }
   }
 
@@ -205,14 +208,28 @@ class Metadata {
       domain: {
         name: schema.title,
         version: '1',
-        chainId: 1,
+        chainId: this.tokenInfo.chainId,
         verifyingContract: tokenManagerAddress
       },
       message: _valuesToObject(schema)
     }
   }
 
-  async save (values) {
+  async sendAsync (convertedData) {
+    return new Promise((resolve, reject) => {
+      this.web3.currentProvider.sendAsync({
+        method: 'eth_signTypedData_v3',
+        params: [this.web3.eth.defaultAccount, JSON.stringify(convertedData)],
+        from: this.web3.eth.defaultAccount
+      }, (err, signedData) => {
+        if (err) return reject(err)
+
+        return resolve(signedData)
+      })
+    })
+  }
+
+  async save (values, tokenId) {
     Object.keys(values).forEach(key => {
       this.schema.properties[key].value = values[key]
     })
@@ -227,27 +244,21 @@ class Metadata {
         // address to, uint256 tokenId, string memory cid, string memory baseUri
         const managerInstance = await this.contracts.tokenManager.deployed()
 
-        // TODO we can send it with this.web3.eth.signTypedData
+        // TODO we can send it with this.web3.eth.signTypedData in future
         const convertedData = this._convertToEip712()
 
-        console.info('convertedData', convertedData)
-
-        const signedData = await this.web3.currentProvider.sendAsync({
-          method: 'eth_signTypedData',
-          params: [JSON.stringify(convertedData), this.web3.eth.defaultAccount],
-          from: this.web3.eth.defaultAccount
-        })
+        const signedData = await this.sendAsync(convertedData)
 
         await managerInstance.mint(
           this.web3.eth.defaultAccount,
-          // TODO make me configurable from form fields
-          1000,
+          tokenId,
           this.schema.cid,
           // TODO make me configurable from form fields
           contractBaseUrl,
           {
             from: this.web3.eth.defaultAccount,
-            data: signedData
+            data: { message: signedData },
+            message: signedData
           }
         )
 
